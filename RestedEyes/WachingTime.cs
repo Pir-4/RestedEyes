@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Globalization;
+using System.Diagnostics;
 
 namespace RestedEyes
 {
     
     class WachingTime
     {
-        private  DateTime _localDate;
-        private  string _cultureName = "ru-RU";
+        private  DateTime _currentTime;
+        Stopwatch stopWatch = new Stopwatch();
         private Form1 myform;
 
         public WachingTime (Form1  form)
@@ -20,11 +20,16 @@ namespace RestedEyes
         }
         public  void Run()
         {
+            stopWatch.Start();
+
             while (true)
             {
-                var culture = new CultureInfo(_cultureName);
-                _localDate = DateTime.Now;
-                myform.Invoke(myform.myDelegat, new Object[] { _localDate.ToString(culture) });
+                _currentTime = DateTime.Now;
+                TimeSpan ts = stopWatch.Elapsed;
+                string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
+                string tmp = ts.Minutes.ToString();
+                myform.Invoke(myform.delegatCurrentTime, new Object[] { curtime });
+                myform.Invoke(myform.delegatWatchTime, new Object[] { tmp });
             }
         }
     }
