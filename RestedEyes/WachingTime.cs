@@ -18,6 +18,12 @@ namespace RestedEyes
         {
             myform = form;
         }
+        private void compareTime()
+        {
+            TimeSpan ts = stopWatch.Elapsed;
+            if(ts.Minutes >= 1)
+                stopWatch.Reset();
+        }
         public  void Run()
         {
             stopWatch.Start();
@@ -25,6 +31,7 @@ namespace RestedEyes
             while (true)
             {
                 _currentTime = DateTime.Now;
+                compareTime();
                 TimeSpan ts = stopWatch.Elapsed;
                 string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
                 string tmp = ts.Minutes.ToString();
