@@ -53,7 +53,9 @@ namespace RestedEyes
         }
         public void updateMessage(string rest, string mesg)
         {
-            MessageBox.Show(mesg, rest,MessageBoxButtons.OK);
+            wachingTime.stopStopWacth();
+            MessageBox.Show(mesg, "Перерыв " + rest + " минут!",MessageBoxButtons.OK);
+            wachingTime.upRest();
         }
         private void Treads()
         {

@@ -13,11 +13,13 @@ namespace RestedEyes
         public int worktime;
         public int rest;
         public string mesg;
-        public ItemTime(int work, int rest, string mesg)
+        public Stopwatch stopWatch;
+        public ItemTime(int work, int rest, string mesg, Stopwatch stopWatch)
         {
             this.worktime = work;
             this.rest = rest;
             this.mesg = mesg;
+            this.stopWatch = stopWatch;
         }
     }
 
@@ -25,6 +27,8 @@ namespace RestedEyes
     {
         private  DateTime _currentTime;
         Stopwatch stopWatch = new Stopwatch();
+        private bool flagRest = false;
+        private int timeRest = 0;
         private Form1 myform;
         private List<ItemTime> _items = new List<ItemTime>();
 
@@ -43,37 +47,73 @@ namespace RestedEyes
                 while ((s = sr.ReadLine()) != null)
                 {
                     string[] words = s.Split('|');
-                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));
+                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2], new Stopwatch()));
                 }
             }
         }
+        public void startStopWacth()
+        {
+            foreach (var item in _items)
+                item.stopWatch.Start();
+        }
+        public void stopStopWacth()
+        {
+            foreach (var item in _items)
+                item.stopWatch.Stop();
+        }
+        public void resetStopWacth(int worktime)
+        {
+            foreach (var item in _items)
+                if (item.worktime <= worktime)
+                    item.stopWatch.Reset();
+        }
         private void compareTime()
         {
-            TimeSpan ts = stopWatch.Elapsed;
             foreach(var item in _items)
             {
-                if(ts.Seconds >= item.worktime)
+                TimeSpan ts = item.stopWatch.Elapsed;
+                if (ts.Seconds >= item.worktime && !flagRest)
                 {
-                    stopWatch.Reset();
-                    myform.Invoke(myform.delegatMessage, new Object[] { item.rest.ToString(),item.mesg });
-                    stopWatch.Start();
+                    item.stopWatch.Reset();
+                    timeRest = item.rest;
+                    myform.Invoke(myform.delegatMessage,item.rest.ToString(),item.mesg);
+                    resetStopWacth(item.worktime);
+
+
                 }
                 
             }
         }
+        public void upRest()
+        {
+            flagRest = true;
+        }
+        private void _Rest()
+        {
+            if (flagRest)
+            {
+                stopWatch.Start();
+            }
+            if (stopWatch.Elapsed.Seconds > timeRest)
+            {
+                stopWatch.Stop();
+                stopWatch.Reset();
+                flagRest = false;               
+                startStopWacth();
+            }
+            myform.Invoke(myform.delegatWatchTime, stopWatch.Elapsed.Seconds.ToString());
+
+        }
         public  void Run()
         {
-            stopWatch.Start();
-
+            startStopWacth();
             while (true)
             {
-                _currentTime = DateTime.Now;
+                _Rest();
                 compareTime();
-                TimeSpan ts = stopWatch.Elapsed;
+                _currentTime = DateTime.Now;
                 string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
-                string tmp = ts.Seconds.ToString();
-                    myform.Invoke(myform.delegatCurrentTime, new Object[] { curtime });
-                    myform.Invoke(myform.delegatWatchTime, new Object[] { tmp });
+                myform.Invoke(myform.delegatCurrentTime, curtime);
             }
         }
     }
