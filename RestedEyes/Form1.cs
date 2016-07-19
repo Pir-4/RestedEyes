@@ -14,10 +14,12 @@ namespace RestedEyes
     {
         public delegate void CurrentTime(string currTime);
         public delegate void WatchTime(string watchTime);
+        public delegate void MessageRest(string rest,string mesage);
 
 
         public CurrentTime delegatCurrentTime;
         public WatchTime delegatWatchTime;
+        public MessageRest delegatMessage;
 
         private Thread threadCurrentTime;
 
@@ -29,6 +31,7 @@ namespace RestedEyes
 
             delegatCurrentTime = new CurrentTime(updateCurrentTime);
             delegatWatchTime = new WatchTime(updateWatchTime);
+            delegatMessage = new MessageRest(updateMessage);
 
             Treads();
         }
@@ -47,6 +50,10 @@ namespace RestedEyes
         public void updateWatchTime(String time)
         {
             label2.Text = time;
+        }
+        public void updateMessage(string rest, string mesg)
+        {
+            MessageBox.Show(mesg, rest,MessageBoxButtons.OK);
         }
         private void Treads()
         {

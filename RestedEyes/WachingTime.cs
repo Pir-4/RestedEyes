@@ -37,13 +37,13 @@ namespace RestedEyes
         private void _loadTime()
         {
             string path =  Directory.GetCurrentDirectory() + "\\ConfigTime.txt";
-            using (StreamReader sr = File.OpenText(path))
+            using (StreamReader sr = new StreamReader(path, Encoding.GetEncoding("windows-1251")))
             {
                 string s = "";
-                while(( s = sr.ReadLine()) != null)
+                while ((s = sr.ReadLine()) != null)
                 {
                     string[] words = s.Split('|');
-                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));   
+                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));
                 }
             }
         }
@@ -55,6 +55,7 @@ namespace RestedEyes
                 if(ts.Seconds >= item.worktime)
                 {
                     stopWatch.Reset();
+                    myform.Invoke(myform.delegatMessage, new Object[] { item.rest.ToString(),item.mesg });
                     stopWatch.Start();
                 }
                 
