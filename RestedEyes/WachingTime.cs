@@ -9,7 +9,27 @@ using Microsoft.Win32;
 
 namespace RestedEyes
 {
-   public struct ItemTime
+    public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
+    public interface IWachingTimeObserver
+    {
+        void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
+    }
+    public interface IWachingTime
+    {
+        void attach(IWachingTimeObserver imo);
+        void eventTime();
+    }
+
+    public class WachingTimeEvent : EventArgs
+    {
+        public string currentTime;
+
+        public WachingTimeEvent(string currtime)
+        {
+            currentTime = currtime;
+        }
+    }
+    public struct ItemTime
     {
         public int worktime;
         public int rest;
@@ -26,22 +46,28 @@ namespace RestedEyes
     }
 
 
-    class WachingTime
+    class WachingTime : IWachingTime
     {
-        private  DateTime _currentTime; // отсчитывает системное время
-        Stopwatch stopWatch = new Stopwatch(); //отсчитывает время отдыха
-        private bool flagRest = false; // когда тру, все счетчики останавливаются
-        private int timeRest = 0; // контралируетв время на отдых
-        private Form1 myform;
+
         private List<ItemTime> _items = new List<ItemTime>();
-        public WachingTime (Form1 form)
+        private DateTime _currentTime;
+
+        //***Event*********
+        public event ModelHandler<WachingTime> eventCurrentTime;
+
+        public void attach(IWachingTimeObserver imo)
         {
-            myform = form;
+            eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
+        }
+
+        public WachingTime()
+        {
             _loadTime();
         }
+
         private void _loadTime()
         {
-            string path =  Directory.GetCurrentDirectory() + "\\ConfigTime.txt";
+            string path = Directory.GetCurrentDirectory() + "\\ConfigTime.txt";
             using (StreamReader sr = new StreamReader(path, Encoding.GetEncoding("windows-1251")))
             {
                 string s = "";
@@ -52,67 +78,15 @@ namespace RestedEyes
                 }
             }
         }
-        public void startStopWacth()
+
+        public void eventTime()
         {
-            foreach (var item in _items)
-                item.stopWatch.Start();
+            _currentTime = DateTime.Now;
+            string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
+            eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
         }
-        public void stopStopWacth()
-        {
-            foreach (var item in _items)
-                item.stopWatch.Stop();
-        }
-        public void resetStopWacth(int worktime)
-        {
-            foreach (var item in _items)
-                if (item.worktime <= worktime)
-                    item.stopWatch.Reset();
-        }
-        private void compareTime()
-        {
-            foreach(var item in _items)
-            {
-                TimeSpan ts = item.stopWatch.Elapsed;
-                if (ts.Seconds >= item.worktime && !flagRest)
-                {
-                    item.stopWatch.Reset();
-                    timeRest = item.rest;
-                    myform.Invoke(myform.delegatMessage,item.rest.ToString(),item.mesg);
-                    resetStopWacth(item.worktime);
 
 
-                }
-                
-            }
-        }
-        public void upRest()
-        {
-            flagRest = true;
-            stopWatch.Start();
-        }
-        private void _Rest()
-        {
-            if (stopWatch.Elapsed.Seconds > timeRest)
-            {
-                stopWatch.Stop();
-                stopWatch.Reset();
-                flagRest = false;               
-                startStopWacth();
-            }
-            myform.Invoke(myform.delegatWatchTime, stopWatch.Elapsed.Seconds.ToString());
 
-        }
-        public  void Run()
-        {
-            startStopWacth();
-            while (true)
-            {
-                _Rest();
-                compareTime();
-                _currentTime = DateTime.Now;
-                string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
-                myform.Invoke(myform.delegatCurrentTime, curtime);
-            }
-        }
     }
 }

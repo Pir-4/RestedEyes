@@ -5,41 +5,24 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Threading;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form 
+    public partial class Form1 : Form , IWachingTimeObserver
     {
-        public delegate void CurrentTime(string currTime);
-        public delegate void WatchTime(string watchTime);
-        public delegate void MessageRest(string rest,string mesage);
+        private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
+        IWachingTime wachingTime = new WachingTime();
+        
 
-
-        public CurrentTime delegatCurrentTime;
-        public WatchTime delegatWatchTime;
-        public MessageRest delegatMessage;
-
-        private Thread threadCurrentTime;
-
-        WachingTime wachingTime;
-
-        private bool autorun = true;
         public Form1()
         {
             InitializeComponent();
-            if (Autoloading.isAutoloading())
-                button1.Text = "Автозапуск: Убрать";
-            else
-                button1.Text = "Автозапуск: Добавить";
+            InitializeButtonAutoloading();
+            wachingTime.attach((IWachingTimeObserver)this);
+            InitializeCurrentTimer();
 
-            delegatCurrentTime = new CurrentTime(updateCurrentTime);
-            delegatWatchTime = new WatchTime(updateWatchTime);
-            delegatMessage = new MessageRest(updateMessage);
 
-            Treads();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -52,30 +35,28 @@ namespace RestedEyes
                 button1.Text = "Автозапуск: Добавить";
             }
         }
-        public void updateCurrentTime(String time)
+
+        private void InitializeCurrentTimer()
         {
-            label1.Text = time;
+            _currentTimer.Interval = 1000;
+            _currentTimer.Tick += new EventHandler(timer_Tick);
+            _currentTimer.Start();
+        }
+        private void InitializeButtonAutoloading()
+        {
+            if (Autoloading.isAutoloading())
+                button1.Text = "Автозапуск: Убрать";
+            else
+                button1.Text = "Автозапуск: Добавить";
+        }
+        void timer_Tick(object sender, EventArgs e)
+        {
+            wachingTime.eventTime();
         }
 
-        public void updateWatchTime(String time)
+        public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            label2.Text = time;
-        }
-        public void updateMessage(string rest, string mesg)
-        {
-            wachingTime.stopStopWacth();
-            MessageBox.Show(mesg, "Перерыв " + rest + " минут!",MessageBoxButtons.OK);
-            wachingTime.upRest();
-        }
-        private void Treads()
-        {
-            threadCurrentTime = new Thread(new ThreadStart(ThreadRunTime));
-            threadCurrentTime.Start();
-        }
-        private void ThreadRunTime()
-        {
-            wachingTime = new WachingTime(this);
-            wachingTime.Run();
+            label1.Text = e.currentTime;
         }
 
     }
