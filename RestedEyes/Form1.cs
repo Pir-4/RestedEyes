@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form , IWachingTimeObserver
+    public partial class Form1 : Form 
     {
         public delegate void CurrentTime(string currTime);
         public delegate void WatchTime(string watchTime);
@@ -23,7 +23,6 @@ namespace RestedEyes
         public MessageRest delegatMessage;
 
         private Thread threadCurrentTime;
-        private Thread threadCurrentTime2;
 
         WachingTime wachingTime;
 
@@ -36,7 +35,7 @@ namespace RestedEyes
             else
                 button1.Text = "Автозапуск: Добавить";
 
-            //delegatCurrentTime = new CurrentTime(updateCurrentTime);
+            delegatCurrentTime = new CurrentTime(updateCurrentTime);
             delegatWatchTime = new WatchTime(updateWatchTime);
             delegatMessage = new MessageRest(updateMessage);
 
@@ -53,16 +52,11 @@ namespace RestedEyes
                 button1.Text = "Автозапуск: Добавить";
             }
         }
-        /*public void updateCurrentTime(String time)
+        public void updateCurrentTime(String time)
         {
             label1.Text = time;
-        }*/
-
-        public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)
-        {
-             string s = e.currentTime;
-            label1.Text = s;
         }
+
         public void updateWatchTime(String time)
         {
             label2.Text = time;
@@ -77,15 +71,10 @@ namespace RestedEyes
         {
             threadCurrentTime = new Thread(new ThreadStart(ThreadRunTime));
             threadCurrentTime.Start();
-
-            threadCurrentTime2= new Thread(this.Show);
-            threadCurrentTime2.Start();
-
         }
         private void ThreadRunTime()
         {
-            wachingTime = new WachingTime();
-            wachingTime.attach((IWachingTimeObserver)this);
+            wachingTime = new WachingTime(this);
             wachingTime.Run();
         }
 
