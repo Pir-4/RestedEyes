@@ -28,6 +28,10 @@ namespace RestedEyes
         public Form1()
         {
             InitializeComponent();
+            if (Autoloading.isAutoloading())
+                button1.Text = "Автозапуск: Убрать";
+            else
+                button1.Text = "Автозапуск: Добавить";
 
             delegatCurrentTime = new CurrentTime(updateCurrentTime);
             delegatWatchTime = new WatchTime(updateWatchTime);
@@ -37,11 +41,14 @@ namespace RestedEyes
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if(autorun)
-                Autoloading.addAutoloadingProgramm();
+            if (Autoloading.AutoloadingProgramm())
+            {
+                button1.Text = "Автозапуск: Убрать";
+            }
             else
-                Autoloading.removeAutoloadingProgramm();
-            autorun = !autorun;
+            {
+                button1.Text = "Автозапуск: Добавить";
+            }
         }
         public void updateCurrentTime(String time)
         {

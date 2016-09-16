@@ -14,21 +14,26 @@ namespace RestedEyes
         public int rest;
         public string mesg;
         public Stopwatch stopWatch;
-        public ItemTime(int work, int rest, string mesg, Stopwatch stopWatch)
+
+        public ItemTime(int timeWork, int timeRest, string mesg, Stopwatch stopWatch)
         {
-            this.worktime = work;
-            this.rest = rest;
-            this.mesg = mesg;
-            this.stopWatch = stopWatch;
+            this.worktime = timeWork; // врем на работу
+            this.rest = timeRest; // время на отдых
+            this.mesg = mesg; //сообщение в диалоговом окне
+            this.stopWatch = stopWatch; //отсчет времени работы
         }
     }
 
+    public interface IwachingTimeObserver
+    {
+        void updateCurrentTime();
+    }
     class WachingTime
     {
-        private  DateTime _currentTime;
-        Stopwatch stopWatch = new Stopwatch();
-        private bool flagRest = false;
-        private int timeRest = 0;
+        private  DateTime _currentTime; // отсчитывает системное время
+        Stopwatch stopWatch = new Stopwatch(); //отсчитывает время отдыха
+        private bool flagRest = false; // когла тру, все счетчики останавливаются
+        private int timeRest = 0; // контралируетв время на отдых
         private Form1 myform;
         private List<ItemTime> _items = new List<ItemTime>();
 
@@ -87,13 +92,10 @@ namespace RestedEyes
         public void upRest()
         {
             flagRest = true;
+            stopWatch.Start();
         }
         private void _Rest()
         {
-            if (flagRest)
-            {
-                stopWatch.Start();
-            }
             if (stopWatch.Elapsed.Seconds > timeRest)
             {
                 stopWatch.Stop();
