@@ -52,6 +52,7 @@ namespace RestedEyes
         void timer_Tick(object sender, EventArgs e)
         {
             wachingTime.eventTime();
+            wachingTime.evetIsRest();
         }
 
         public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)

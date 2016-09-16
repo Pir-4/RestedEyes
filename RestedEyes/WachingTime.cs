@@ -10,16 +10,11 @@ using Microsoft.Win32;
 namespace RestedEyes
 {
     public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
+
     public interface IWachingTimeObserver
     {
         void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
     }
-    public interface IWachingTime
-    {
-        void attach(IWachingTimeObserver imo);
-        void eventTime();
-    }
-
     public class WachingTimeEvent : EventArgs
     {
         public string currentTime;
@@ -45,7 +40,12 @@ namespace RestedEyes
         }
     }
 
-
+    public interface IWachingTime
+    {
+        void attach(IWachingTimeObserver imo);
+        void eventTime();
+        void evetIsRest();
+    }
     class WachingTime : IWachingTime
     {
 
@@ -60,9 +60,12 @@ namespace RestedEyes
             eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
         }
 
+        //**********************
+
         public WachingTime()
         {
             _loadTime();
+            _startStopWacth();
         }
 
         private void _loadTime()
@@ -76,8 +79,35 @@ namespace RestedEyes
                     string[] words = s.Split('|');
                     _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2], new Stopwatch()));
                 }
+                _sortList();
             }
         }
+        private void _sortList()
+        {
+            for (int i = 0;  i <_items.Count-1; i++)
+            {
+                for (int j = 1; j < _items.Count; j++)
+                {
+                    if (_items[i].worktime < _items[j].worktime)
+                    {
+                        ItemTime tmp = _items[i];
+                        _items[i] = _items[j];
+                        _items[j] = tmp;
+                    }
+                }
+            }
+        }
+        private void _startStopWacth()
+        {
+            foreach (var item in _items)
+                item.stopWatch.Start();
+        }
+        private void _stopStopWacth()
+        {
+            foreach (var item in _items)
+                item.stopWatch.Stop();
+        }
+
 
         public void eventTime()
         {
@@ -86,7 +116,10 @@ namespace RestedEyes
             eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
         }
 
-
+        public void evetIsRest()
+        {
+            
+        }
 
     }
 }
