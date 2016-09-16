@@ -5,9 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Win32;
 
 namespace RestedEyes
 {
+    public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
+
+    public interface IWachingTimeObserver
+    {
+        void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
+    }
+
+    public interface IWachingTime
+    {
+        void attach(IWachingTimeObserver imo);
+    }
+
+
+    public class WachingTimeEvent : EventArgs
+    {
+        public string currentTime;
+
+        public WachingTimeEvent(string currtime)
+        {
+            currentTime = currtime;
+        }
+    }
+
     public struct ItemTime
     {
         public int worktime;
@@ -24,23 +48,27 @@ namespace RestedEyes
         }
     }
 
-    public interface IwachingTimeObserver
-    {
-        void updateCurrentTime();
-    }
-    class WachingTime
+
+    class WachingTime : IWachingTime
     {
         private  DateTime _currentTime; // отсчитывает системное время
         Stopwatch stopWatch = new Stopwatch(); //отсчитывает время отдыха
-        private bool flagRest = false; // когла тру, все счетчики останавливаются
+        private bool flagRest = false; // когда тру, все счетчики останавливаются
         private int timeRest = 0; // контралируетв время на отдых
-        private Form1 myform;
+       // private Form1 myform;
         private List<ItemTime> _items = new List<ItemTime>();
 
 
-        public WachingTime (Form1  form)
+        public event ModelHandler<WachingTime> eventCurrentTime;
+
+        public void attach(IWachingTimeObserver imo)
         {
-            myform = form;
+            eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
+        }
+
+        public WachingTime ()
+        {
+            //myform = form;
             _loadTime();
         }
         private void _loadTime()
@@ -81,7 +109,7 @@ namespace RestedEyes
                 {
                     item.stopWatch.Reset();
                     timeRest = item.rest;
-                    myform.Invoke(myform.delegatMessage,item.rest.ToString(),item.mesg);
+                    //myform.Invoke(myform.delegatMessage,item.rest.ToString(),item.mesg);
                     resetStopWacth(item.worktime);
 
 
@@ -103,7 +131,7 @@ namespace RestedEyes
                 flagRest = false;               
                 startStopWacth();
             }
-            myform.Invoke(myform.delegatWatchTime, stopWatch.Elapsed.Seconds.ToString());
+            //myform.Invoke(myform.delegatWatchTime, stopWatch.Elapsed.Seconds.ToString());
 
         }
         public  void Run()
@@ -115,7 +143,8 @@ namespace RestedEyes
                 compareTime();
                 _currentTime = DateTime.Now;
                 string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
-                myform.Invoke(myform.delegatCurrentTime, curtime);
+                eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
+                //myform.Invoke(myform.delegatCurrentTime, curtime);
             }
         }
     }

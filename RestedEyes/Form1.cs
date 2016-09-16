@@ -8,9 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+
 namespace RestedEyes
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form , IWachingTimeObserver
     {
         public delegate void CurrentTime(string currTime);
         public delegate void WatchTime(string watchTime);
@@ -22,8 +23,10 @@ namespace RestedEyes
         public MessageRest delegatMessage;
 
         private Thread threadCurrentTime;
+        private Thread threadCurrentTime2;
 
         WachingTime wachingTime;
+
         private bool autorun = true;
         public Form1()
         {
@@ -33,7 +36,7 @@ namespace RestedEyes
             else
                 button1.Text = "Автозапуск: Добавить";
 
-            delegatCurrentTime = new CurrentTime(updateCurrentTime);
+            //delegatCurrentTime = new CurrentTime(updateCurrentTime);
             delegatWatchTime = new WatchTime(updateWatchTime);
             delegatMessage = new MessageRest(updateMessage);
 
@@ -50,9 +53,15 @@ namespace RestedEyes
                 button1.Text = "Автозапуск: Добавить";
             }
         }
-        public void updateCurrentTime(String time)
+        /*public void updateCurrentTime(String time)
         {
             label1.Text = time;
+        }*/
+
+        public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)
+        {
+             string s = e.currentTime;
+            label1.Text = s;
         }
         public void updateWatchTime(String time)
         {
@@ -68,10 +77,15 @@ namespace RestedEyes
         {
             threadCurrentTime = new Thread(new ThreadStart(ThreadRunTime));
             threadCurrentTime.Start();
+
+            threadCurrentTime2= new Thread(this.Show);
+            threadCurrentTime2.Start();
+
         }
         private void ThreadRunTime()
         {
-            wachingTime = new WachingTime(this);
+            wachingTime = new WachingTime();
+            wachingTime.attach((IWachingTimeObserver)this);
             wachingTime.Run();
         }
 
