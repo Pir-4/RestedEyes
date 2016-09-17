@@ -149,22 +149,7 @@ namespace RestedEyes
                     string[] words = s.Split('|');
                     _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));
                 }
-               // _sortList();
-            }
-        }
-        private void _sortList()
-        {
-            for (int i = 0;  i <_items.Count-1; i++)
-            {
-                for (int j = 1; j < _items.Count; j++)
-                {
-                    if (_items[i]. worktime < _items[j].worktime)
-                    {
-                        ItemTime tmp = _items[i];
-                        _items[i] = _items[j];
-                        _items[j] = tmp;
-                    }
-                }
+
             }
         }
         private void _startAllWork()
@@ -172,12 +157,6 @@ namespace RestedEyes
             foreach (var item in _items)
                 item.startWork();
         }
-        private void _stopAllWork()
-        {
-            foreach (var item in _items)
-                item.stopWork();
-        }
-
         private void endWork()
         {
             foreach (var item in _items)
