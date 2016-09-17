@@ -26,18 +26,55 @@ namespace RestedEyes
     }
     public struct ItemTime
     {
-        public int worktime;
-        public int rest;
-        public string mesg;
-        public Stopwatch stopWatch;
+        private int worktime;
+        private int rest;
+        private string mesg;
+        private Stopwatch workWatch;
+        private Stopwatch restWatch;
 
-        public ItemTime(int timeWork, int timeRest, string mesg, Stopwatch stopWatch)
+        public ItemTime(int timeWork, int timeRest, string mesg)
         {
             this.worktime = timeWork; // врем на работу
             this.rest = timeRest; // время на отдых
             this.mesg = mesg; //сообщение в диалоговом окне
-            this.stopWatch = stopWatch; //отсчет времени работы
+            this.workWatch= new Stopwatch(); //отсчет времени работы
+            this.restWatch = new Stopwatch(); //отсчет времени отдыха
         }
+        /*Work*/
+        public void startWork()
+        {
+            workWatch.Start();
+        }
+        public void stopWork()
+        {
+            workWatch.Stop();
+        }
+        public void resetWork()
+        {
+            workWatch.Reset();
+        }
+
+        /*Rest*/
+        public void startRest()
+        {
+            restWatch.Start();
+        }
+        public void stopRest()
+        {
+            restWatch.Stop();
+        }
+        public void resetRest()
+        {
+            restWatch.Reset();
+        }
+
+        private bool compareWork()
+        {
+            TimeSpan ts = this.workWatch.Elapsed;
+            ts.Seconds >= this.worktime ?  return
+
+        }
+
     }
 
     public interface IWachingTime
@@ -65,7 +102,7 @@ namespace RestedEyes
         public WachingTime()
         {
             _loadTime();
-            _startStopWacth();
+            _startAllWork();
         }
 
         private void _loadTime()
@@ -77,7 +114,7 @@ namespace RestedEyes
                 while ((s = sr.ReadLine()) != null)
                 {
                     string[] words = s.Split('|');
-                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2], new Stopwatch()));
+                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));
                 }
                 _sortList();
             }
@@ -97,15 +134,15 @@ namespace RestedEyes
                 }
             }
         }
-        private void _startStopWacth()
+        private void _startAllWork()
         {
             foreach (var item in _items)
-                item.stopWatch.Start();
+                item.startWork();
         }
-        private void _stopStopWacth()
+        private void _stopAllWork()
         {
             foreach (var item in _items)
-                item.stopWatch.Stop();
+                item.stopWork();
         }
 
 
