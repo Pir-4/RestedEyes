@@ -60,5 +60,10 @@ namespace RestedEyes
             label1.Text = e.currentTime;
         }
 
+        public void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e)
+        {
+            MessageBox.Show(e.restMsg, "Перерыв " + e.restMsg + " минут!", MessageBoxButtons.OK);
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using Microsoft.Win32;
 
 namespace RestedEyes
@@ -14,21 +15,31 @@ namespace RestedEyes
     public interface IWachingTimeObserver
     {
         void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
+        void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e);
     }
     public class WachingTimeEvent : EventArgs
     {
         public string currentTime;
 
+        public int restTime;
+        public string restMsg;
+
         public WachingTimeEvent(string currtime)
         {
             currentTime = currtime;
         }
+
+        public WachingTimeEvent(int rTime, string rMsg)
+        {
+            restTime = rTime;
+            restMsg = rMsg;
+        }
     }
     public struct ItemTime
     {
-        private int worktime;
-        private int rest;
-        private string mesg;
+        public int worktime;
+        public int rest;
+        public string mesg;
         private Stopwatch workWatch;
         private Stopwatch restWatch;
 
@@ -68,11 +79,19 @@ namespace RestedEyes
             restWatch.Reset();
         }
 
-        private bool compareWork()
+        public bool isWorkGone()
         {
             TimeSpan ts = this.workWatch.Elapsed;
-            ts.Seconds >= this.worktime ?  return
-
+            if (ts.Seconds >= this.worktime)
+                return true;
+            return false;
+        }
+        public bool isRestkGone()
+        {
+            TimeSpan ts = this.restWatch.Elapsed;
+            if (ts.Seconds >= this.rest)
+                return true;
+            return false;
         }
 
     }
@@ -89,12 +108,16 @@ namespace RestedEyes
         private List<ItemTime> _items = new List<ItemTime>();
         private DateTime _currentTime;
 
+        private bool falgIsRest = false;
+
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
+        public event ModelHandler<WachingTime> eventEndWork;
 
         public void attach(IWachingTimeObserver imo)
         {
             eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
+            eventEndWork += new ModelHandler<WachingTime>(imo.updateEndWork);
         }
 
         //**********************
@@ -125,7 +148,7 @@ namespace RestedEyes
             {
                 for (int j = 1; j < _items.Count; j++)
                 {
-                    if (_items[i].worktime < _items[j].worktime)
+                    if (_items[i]. worktime < _items[j].worktime)
                     {
                         ItemTime tmp = _items[i];
                         _items[i] = _items[j];
@@ -145,6 +168,17 @@ namespace RestedEyes
                 item.stopWork();
         }
 
+        private void endWork(ItemTime currRest)
+        {
+            foreach (var item in _items)
+            {
+                if (item.worktime < currRest.worktime)
+                    item.resetWork();
+            }
+            falgIsRest = true;
+            eventEndWork.Invoke(this,new WachingTimeEvent(currRest.rest,currRest.mesg));
+
+        }
 
         public void eventTime()
         {
@@ -155,7 +189,22 @@ namespace RestedEyes
 
         public void evetIsRest()
         {
-            
+            if (!falgIsRest)
+            {
+                foreach (var item in _items)
+                {
+                    if (item.isWorkGone())
+                    {
+                        endWork(item);
+                        return;
+
+                    }
+                }
+            }
+            else
+            {
+
+            }
         }
 
     }
