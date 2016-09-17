@@ -24,8 +24,6 @@ namespace RestedEyes
             InitializeCurrentTimer();
 
             label2.Text = "";
-            button2.Text = "Отошел";
-
 
         }
         private void button1_Click(object sender, EventArgs e)
@@ -73,15 +71,6 @@ namespace RestedEyes
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
         {
             label2.Text = e.restTime.ToString();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            isBreak = !isBreak;
-            if(isBreak)
-                button2.Text = "Подошел";
-            else
-                button2.Text = "Отошел";
         }
     }
 }
