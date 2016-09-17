@@ -117,6 +117,7 @@ namespace RestedEyes
 
         private ItemTime _currentItem;
         private bool falgIsRest = false;
+        private bool falgIsBreak = false;
 
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
@@ -157,6 +158,17 @@ namespace RestedEyes
             foreach (var item in _items)
                 item.startWork();
         }
+        private void _stopAllWork()
+        {
+            foreach (var item in _items)
+                item.stopWork();
+        }
+        private void _startAllRest()
+        {
+            foreach (var item in _items)
+                item.startRest();
+        }
+
         private void endWork()
         {
             foreach (var item in _items)
@@ -169,7 +181,6 @@ namespace RestedEyes
             eventEndWork.Invoke(this,new WachingTimeEvent(_currentItem.rest, _currentItem.mesg));
 
         }
-
         private void endRest()
         {
             if (_currentItem.isRestGone())
@@ -187,8 +198,24 @@ namespace RestedEyes
             }
         }
 
+        private void breakCompare()
+        {
+            if (falgIsBreak)
+            {
+                foreach (var item in _items)
+                {
+                    if (item.isRestGone())
+                    {
+                        item.resetWork();
+                        item.resetWork();
+                    }
+                }
+            }
+        }
+
         public void eventTime()
         {
+            breakCompare();
             _currentTime = DateTime.Now;
             string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
             eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
@@ -212,6 +239,20 @@ namespace RestedEyes
             else
             {
                 endRest();
+            }
+
+        }
+
+        public void eventBreak()
+        {
+            if (falgIsBreak)
+            {
+                _stopAllWork();
+                _startAllRest();
+            }
+            else
+            {
+                _startAllWork();
             }
         }
 

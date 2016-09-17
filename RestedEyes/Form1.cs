@@ -13,6 +13,7 @@ namespace RestedEyes
     {
         private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
         IWachingTime wachingTime = new WachingTime();
+        private bool isBreak = false;
         
 
         public Form1()
@@ -21,7 +22,9 @@ namespace RestedEyes
             InitializeButtonAutoloading();
             wachingTime.attach((IWachingTimeObserver)this);
             InitializeCurrentTimer();
+
             label2.Text = "";
+            button2.Text = "Отошел";
 
 
         }
@@ -53,7 +56,8 @@ namespace RestedEyes
         void timer_Tick(object sender, EventArgs e)
         {
             wachingTime.eventTime();
-            wachingTime.evetIsRest();
+            if(!isBreak)
+                wachingTime.evetIsRest();
         }
 
         public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)
@@ -71,5 +75,13 @@ namespace RestedEyes
             label2.Text = e.restTime.ToString();
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            isBreak = !isBreak;
+            if(isBreak)
+                button2.Text = "Подошел";
+            else
+                button2.Text = "Отошел";
+        }
     }
 }
