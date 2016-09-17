@@ -149,7 +149,7 @@ namespace RestedEyes
                     string[] words = s.Split('|');
                     _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));
                 }
-                _sortList();
+               // _sortList();
             }
         }
         private void _sortList()
@@ -182,7 +182,7 @@ namespace RestedEyes
         {
             foreach (var item in _items)
             {
-                if (item.worktime < _currentItem.worktime)
+                if (item.worktime <= _currentItem.worktime)
                     item.resetWork();
             }
             falgIsRest = true;
@@ -197,9 +197,11 @@ namespace RestedEyes
             {
                 _currentItem.resetRest();
                 falgIsRest = false;
+                _startAllWork();
             }
             else
             {
+                
                 TimeSpan ts = _currentItem.getRest().Elapsed;
                 eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Seconds, ""));
                 

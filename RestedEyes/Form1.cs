@@ -21,6 +21,7 @@ namespace RestedEyes
             InitializeButtonAutoloading();
             wachingTime.attach((IWachingTimeObserver)this);
             InitializeCurrentTimer();
+            label2.Text = "";
 
 
         }
