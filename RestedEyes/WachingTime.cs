@@ -16,6 +16,7 @@ namespace RestedEyes
     {
         void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
         void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e);
+        void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e);
     }
     public class WachingTimeEvent : EventArgs
     {
@@ -23,6 +24,7 @@ namespace RestedEyes
 
         public int restTime;
         public string restMsg;
+
 
         public WachingTimeEvent(string currtime)
         {
@@ -79,6 +81,11 @@ namespace RestedEyes
             restWatch.Reset();
         }
 
+        public Stopwatch getRest()
+        {
+            return restWatch;
+        }
+
         public bool isWorkGone()
         {
             TimeSpan ts = this.workWatch.Elapsed;
@@ -86,7 +93,7 @@ namespace RestedEyes
                 return true;
             return false;
         }
-        public bool isRestkGone()
+        public bool isRestGone()
         {
             TimeSpan ts = this.restWatch.Elapsed;
             if (ts.Seconds >= this.rest)
@@ -108,16 +115,19 @@ namespace RestedEyes
         private List<ItemTime> _items = new List<ItemTime>();
         private DateTime _currentTime;
 
+        private ItemTime _currentItem;
         private bool falgIsRest = false;
 
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
         public event ModelHandler<WachingTime> eventEndWork;
+        public event ModelHandler<WachingTime> eventTimeRest; 
 
         public void attach(IWachingTimeObserver imo)
         {
             eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
             eventEndWork += new ModelHandler<WachingTime>(imo.updateEndWork);
+            eventTimeRest += new ModelHandler<WachingTime>(imo.updateTimeRest);
         }
 
         //**********************
@@ -168,16 +178,32 @@ namespace RestedEyes
                 item.stopWork();
         }
 
-        private void endWork(ItemTime currRest)
+        private void endWork()
         {
             foreach (var item in _items)
             {
-                if (item.worktime < currRest.worktime)
+                if (item.worktime < _currentItem.worktime)
                     item.resetWork();
             }
             falgIsRest = true;
-            eventEndWork.Invoke(this,new WachingTimeEvent(currRest.rest,currRest.mesg));
+            _currentItem.startRest();
+            eventEndWork.Invoke(this,new WachingTimeEvent(_currentItem.rest, _currentItem.mesg));
 
+        }
+
+        private void endRest()
+        {
+            if (_currentItem.isRestGone())
+            {
+                _currentItem.resetRest();
+                falgIsRest = false;
+            }
+            else
+            {
+                TimeSpan ts = _currentItem.getRest().Elapsed;
+                eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Seconds, ""));
+                
+            }
         }
 
         public void eventTime()
@@ -195,7 +221,8 @@ namespace RestedEyes
                 {
                     if (item.isWorkGone())
                     {
-                        endWork(item);
+                        _currentItem = item;
+                        endWork();
                         return;
 
                     }
@@ -203,7 +230,7 @@ namespace RestedEyes
             }
             else
             {
-
+                endRest();
             }
         }
 
