@@ -24,6 +24,7 @@ namespace RestedEyes
             InitializeCurrentTimer();
 
             label2.Text = "";
+            button2.Text = "Отошел";
 
         }
         private void button1_Click(object sender, EventArgs e)
