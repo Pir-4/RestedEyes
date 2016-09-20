@@ -107,7 +107,7 @@ namespace RestedEyes
     {
         void attach(IWachingTimeObserver imo);
         void eventTime();
-        void evetIsRest();
+        void eventBreak();
     }
     class WachingTime : IWachingTime
     {
@@ -116,8 +116,8 @@ namespace RestedEyes
         private DateTime _currentTime;
 
         private ItemTime _currentItem;
-        private bool falgIsRest = false;
-        private bool falgIsBreak = false;
+        private bool flagIsRest = false;
+        private bool flagIsBreak = false;
 
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
@@ -168,6 +168,11 @@ namespace RestedEyes
             foreach (var item in _items)
                 item.startRest();
         }
+        private void _resetAllrest()
+        {
+            foreach (var item in _items)
+                item.resetRest();
+        }
 
         private void endWork()
         {
@@ -176,7 +181,7 @@ namespace RestedEyes
                 if (item.worktime <= _currentItem.worktime)
                     item.resetWork();
             }
-            falgIsRest = true;
+            flagIsRest = true;
             _currentItem.startRest();
             eventEndWork.Invoke(this,new WachingTimeEvent(_currentItem.rest, _currentItem.mesg));
 
@@ -186,44 +191,44 @@ namespace RestedEyes
             if (_currentItem.isRestGone())
             {
                 _currentItem.resetRest();
-                falgIsRest = false;
+                flagIsRest = false;
                 _startAllWork();
             }
             else
             {
                 
                 TimeSpan ts = _currentItem.getRest().Elapsed;
-                eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Seconds, ""));
+                eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Seconds, ts.Seconds.ToString()));
                 
             }
         }
 
         private void breakCompare()
         {
-            if (falgIsBreak)
+            foreach (var item in _items)
             {
-                foreach (var item in _items)
+                if (item.isRestGone())
                 {
-                    if (item.isRestGone())
-                    {
-                        item.resetWork();
-                        item.resetWork();
-                    }
+                    item.resetWork();
+                    item.resetRest();
                 }
             }
         }
-
         public void eventTime()
         {
-            breakCompare();
+            if (flagIsBreak)
+                breakCompare();
+            else
+                eventIsRest();
+
             _currentTime = DateTime.Now;
-            string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" + _currentTime.Second.ToString();
+            string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" +
+                             _currentTime.Second.ToString();
             eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
         }
-
-        public void evetIsRest()
+        public void eventIsRest()
         {
-            if (!falgIsRest)
+            if (!flagIsRest)
             {
                 foreach (var item in _items)
                 {
@@ -242,17 +247,20 @@ namespace RestedEyes
             }
 
         }
-
         public void eventBreak()
         {
-            if (falgIsBreak)
+            flagIsBreak = !flagIsBreak;
+            if (flagIsBreak)
             {
                 _stopAllWork();
                 _startAllRest();
-            }
+                flagIsRest = false;
+
+    }
             else
             {
                 _startAllWork();
+                _resetAllrest();
             }
         }
 

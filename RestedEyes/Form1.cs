@@ -56,8 +56,6 @@ namespace RestedEyes
         void timer_Tick(object sender, EventArgs e)
         {
             wachingTime.eventTime();
-            if(!isBreak)
-                wachingTime.evetIsRest();
         }
 
         public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)
@@ -67,7 +65,7 @@ namespace RestedEyes
 
         public void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            MessageBox.Show(e.restMsg, "Перерыв " + e.restMsg + " минут!", MessageBoxButtons.OK);
+            MessageBox.Show(e.restMsg, "Перерыв " + e.restTime.ToString() + " минут!", MessageBoxButtons.OK);
         }
 
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
@@ -82,6 +80,7 @@ namespace RestedEyes
                 button2.Text = "Подошел";
             else
                 button2.Text = "Отошел";
+            wachingTime.eventBreak();
         }
     }
 }
