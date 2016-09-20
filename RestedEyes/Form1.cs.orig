@@ -70,6 +70,7 @@ namespace RestedEyes
         {
             label2.Text = e.restTime.ToString();
         }
+<<<<<<< HEAD
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -80,5 +81,7 @@ namespace RestedEyes
                 button2.Text = "Отошел";
             wachingTime.eventBreak();
         }
+=======
+>>>>>>> master
     }
 }
