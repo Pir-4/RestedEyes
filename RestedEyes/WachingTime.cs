@@ -109,6 +109,7 @@ namespace RestedEyes
         void eventTime();
         void eventBreak();
     }
+
     class WachingTime : IWachingTime
     {
 
@@ -116,13 +117,14 @@ namespace RestedEyes
         private DateTime _currentTime;
 
         private ItemTime _currentItem;
-        private bool flagIsRest = false;
-        private bool flagIsBreak = false;
+        private bool _flagIsRest = false;
+        private bool _flagIsBreak = false;
+        private Stopwatch _timeBreak =new Stopwatch();
 
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
         public event ModelHandler<WachingTime> eventEndWork;
-        public event ModelHandler<WachingTime> eventTimeRest; 
+        public event ModelHandler<WachingTime> eventTimeRest;
 
         public void attach(IWachingTimeObserver imo)
         {
@@ -153,21 +155,25 @@ namespace RestedEyes
 
             }
         }
+
         private void _startAllWork()
         {
             foreach (var item in _items)
                 item.startWork();
         }
+
         private void _stopAllWork()
         {
             foreach (var item in _items)
                 item.stopWork();
         }
+
         private void _startAllRest()
         {
             foreach (var item in _items)
                 item.startRest();
         }
+
         private void _resetAllrest()
         {
             foreach (var item in _items)
@@ -181,25 +187,27 @@ namespace RestedEyes
                 if (item.worktime <= _currentItem.worktime)
                     item.resetWork();
             }
-            flagIsRest = true;
+            _flagIsRest = true;
             _currentItem.startRest();
-            eventEndWork.Invoke(this,new WachingTimeEvent(_currentItem.rest, _currentItem.mesg));
+            eventEndWork.Invoke(this, new WachingTimeEvent(_currentItem.rest, _currentItem.mesg));
 
         }
+
         private void endRest()
         {
             if (_currentItem.isRestGone())
             {
                 _currentItem.resetRest();
-                flagIsRest = false;
+                _flagIsRest = false;
                 _startAllWork();
+                eventTimeRest.Invoke(this, new WachingTimeEvent(0, ""));
             }
             else
             {
-                
+
                 TimeSpan ts = _currentItem.getRest().Elapsed;
                 eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Seconds, ts.Seconds.ToString()));
-                
+
             }
         }
 
@@ -213,10 +221,12 @@ namespace RestedEyes
                     item.resetRest();
                 }
             }
+            eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Seconds,""));
         }
+
         public void eventTime()
         {
-            if (flagIsBreak)
+            if (_flagIsBreak)
                 breakCompare();
             else
                 eventIsRest();
@@ -226,9 +236,10 @@ namespace RestedEyes
                              _currentTime.Second.ToString();
             eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
         }
+
         public void eventIsRest()
         {
-            if (!flagIsRest)
+            if (!_flagIsRest)
             {
                 foreach (var item in _items)
                 {
@@ -247,20 +258,23 @@ namespace RestedEyes
             }
 
         }
+
         public void eventBreak()
         {
-            flagIsBreak = !flagIsBreak;
-            if (flagIsBreak)
+            _flagIsBreak = !_flagIsBreak;
+            if (_flagIsBreak)
             {
                 _stopAllWork();
                 _startAllRest();
-                flagIsRest = false;
-
-    }
+                _flagIsRest = false;
+                _timeBreak.Start();
+            }
             else
             {
                 _startAllWork();
                 _resetAllrest();
+                _timeBreak.Reset();
+                eventTimeRest.Invoke(this, new WachingTimeEvent(0, ""));
             }
         }
 
