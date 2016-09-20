@@ -69,7 +69,7 @@ namespace RestedEyes
 
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            label2.Text = e.restTime.ToString();
+            label2.Text = "Отдыха прошло " + e.restTime.ToString() + " минут";
         }
 
         private void button2_Click(object sender, EventArgs e)

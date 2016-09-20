@@ -89,14 +89,14 @@ namespace RestedEyes
         public bool isWorkGone()
         {
             TimeSpan ts = this.workWatch.Elapsed;
-            if (ts.Seconds >= this.worktime)
+            if (ts.Minutes >= this.worktime)
                 return true;
             return false;
         }
         public bool isRestGone()
         {
             TimeSpan ts = this.restWatch.Elapsed;
-            if (ts.Seconds >= this.rest)
+            if (ts.Minutes >= this.rest)
                 return true;
             return false;
         }
@@ -206,7 +206,7 @@ namespace RestedEyes
             {
 
                 TimeSpan ts = _currentItem.getRest().Elapsed;
-                eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Seconds, ts.Seconds.ToString()));
+                eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Minutes, ts.Minutes.ToString()));
 
             }
         }
@@ -221,7 +221,7 @@ namespace RestedEyes
                     item.resetRest();
                 }
             }
-            eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Seconds,""));
+            eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Minutes, ""));
         }
 
         public void eventTime()
