@@ -1,0 +1,10 @@
+E:\education\programs\RestedEyes\RestedEyes\bin\Release\RestedEyes.exe.config
+E:\education\programs\RestedEyes\RestedEyes\bin\Release\RestedEyes.exe
+E:\education\programs\RestedEyes\RestedEyes\bin\Release\RestedEyes.pdb
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.g.resources
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.Form1.resources
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.Properties.Resources.resources
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.csproj.GenerateResource.Cache
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.exe
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.pdb
+E:\education\programs\RestedEyes\RestedEyes\obj\Release\RestedEyes.csprojResolveAssemblyReference.cache
