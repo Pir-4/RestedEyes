@@ -23,7 +23,9 @@ namespace RestedEyes
             wachingTime.attach((IWachingTimeObserver)this);
             InitializeCurrentTimer();
 
-            label2.Text = "";
+            label4.Text = wachingTime.eventStart();
+            label2.Text = "Отдыха прошло 0 минут";
+            label3.Text = "Работаете 0 минут";
             button2.Text = "Отошел";
 
         }
@@ -70,6 +72,10 @@ namespace RestedEyes
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
         {
             label2.Text = "Отдыха прошло " + e.restTime.ToString() + " минут";
+        }
+        public void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e)
+        {
+            label3.Text = "Работаете " + e.restTime.ToString() + " минут";
         }
 
         private void button2_Click(object sender, EventArgs e)

@@ -17,6 +17,7 @@ namespace RestedEyes
         void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
         void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e);
         void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e);
+        void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e);
     }
     public class WachingTimeEvent : EventArgs
     {
@@ -108,6 +109,7 @@ namespace RestedEyes
         void attach(IWachingTimeObserver imo);
         void eventTime();
         void eventBreak();
+        string eventStart();
     }
 
     class WachingTime : IWachingTime
@@ -119,18 +121,21 @@ namespace RestedEyes
         private ItemTime _currentItem;
         private bool _flagIsRest = false;
         private bool _flagIsBreak = false;
-        private Stopwatch _timeBreak =new Stopwatch();
+        private Stopwatch _timeBreak = new Stopwatch();
+        private Stopwatch _timeWork = new Stopwatch();
 
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
         public event ModelHandler<WachingTime> eventEndWork;
         public event ModelHandler<WachingTime> eventTimeRest;
+        public event ModelHandler<WachingTime> eventTimeWork;
 
         public void attach(IWachingTimeObserver imo)
         {
             eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
             eventEndWork += new ModelHandler<WachingTime>(imo.updateEndWork);
             eventTimeRest += new ModelHandler<WachingTime>(imo.updateTimeRest);
+            eventTimeWork += new ModelHandler<WachingTime>(imo.updateTimeWork);
         }
 
         //**********************
@@ -200,15 +205,8 @@ namespace RestedEyes
                 _currentItem.resetRest();
                 _flagIsRest = false;
                 _startAllWork();
-                eventTimeRest.Invoke(this, new WachingTimeEvent(0, ""));
             }
-            else
-            {
-
-                TimeSpan ts = _currentItem.getRest().Elapsed;
-                eventTimeRest.Invoke(this, new WachingTimeEvent(ts.Minutes, ts.Minutes.ToString()));
-
-            }
+    
         }
 
         private void breakCompare()
@@ -221,7 +219,6 @@ namespace RestedEyes
                     item.resetRest();
                 }
             }
-            eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Minutes, ""));
         }
 
         public void eventTime()
@@ -231,10 +228,19 @@ namespace RestedEyes
             else
                 eventIsRest();
 
+            displayWorkTime();
+            displayRestTime();
             _currentTime = DateTime.Now;
             string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" +
                              _currentTime.Second.ToString();
             eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
+        }
+
+        public string eventStart()
+        {
+            _currentTime = DateTime.Now;
+            return _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" +
+                             _currentTime.Second.ToString();
         }
 
         public void eventIsRest()
@@ -267,15 +273,34 @@ namespace RestedEyes
                 _stopAllWork();
                 _startAllRest();
                 _flagIsRest = false;
-                _timeBreak.Start();
             }
             else
             {
                 _startAllWork();
                 _resetAllrest();
-                _timeBreak.Reset();
-                eventTimeRest.Invoke(this, new WachingTimeEvent(0, ""));
             }
+        }
+
+        private void displayRestTime()
+        {
+            _timeBreak.Start();
+            if (!_flagIsBreak && !_flagIsRest)
+            {
+                _timeBreak.Reset();
+                _timeBreak.Stop();
+               
+            }
+            eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Minutes, ""));
+        }
+        private void displayWorkTime()
+        {
+            _timeWork.Start();
+            if (_flagIsBreak || _flagIsRest)
+            {
+                _timeWork.Reset();
+                _timeWork.Stop();
+            }
+            eventTimeWork.Invoke(this, new WachingTimeEvent(_timeWork.Elapsed.Minutes, ""));
         }
 
     }
