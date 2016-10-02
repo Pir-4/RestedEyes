@@ -190,7 +190,10 @@ namespace RestedEyes
             foreach (var item in _items)
             {
                 if (item.worktime <= _currentItem.worktime)
+                {
                     item.resetWork();
+                    item.stopWork();
+                }
             }
             _flagIsRest = true;
             _currentItem.startRest();
@@ -202,6 +205,7 @@ namespace RestedEyes
         {
             if (_currentItem.isRestGone())
             {
+                _currentItem.stopRest();
                 _currentItem.resetRest();
                 _flagIsRest = false;
                 _startAllWork();
@@ -217,6 +221,8 @@ namespace RestedEyes
                 {
                     item.resetWork();
                     item.resetRest();
+                    item.stopWork();
+                    item.startRest();
                 }
             }
         }
@@ -286,7 +292,7 @@ namespace RestedEyes
             _timeBreak.Start();
             if (!_flagIsBreak && !_flagIsRest)
             {
-                _timeBreak.Reset();
+                _timeBreak.Reset(); 
                 _timeBreak.Stop();
                
             }
