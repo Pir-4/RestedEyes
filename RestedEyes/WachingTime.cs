@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
-using Microsoft.Win32;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace RestedEyes
 {
+    [DataContract]
+    internal class Config
+    {
+        [DataMember] internal string message;
+        [DataMember]internal int timeWork;
+        [DataMember]internal string timeWorkSign;
+        [DataMember] internal int timeRest;
+        [DataMember]internal string timeRestSign;
+    }
     public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
 
     public interface IWachingTimeObserver
@@ -165,7 +172,10 @@ namespace RestedEyes
 
         private void _loadTime()
         {
+
             string path = Directory.GetCurrentDirectory() + "\\ConfigTime.txt";
+            string path2 = Directory.GetCurrentDirectory() + "\\ConfigTime2.json";
+            createConfig(path2);
             using (StreamReader sr = new StreamReader(path, Encoding.GetEncoding("windows-1251")))
             {
                 string s = "";
@@ -178,7 +188,23 @@ namespace RestedEyes
             }
         }
 
+        private void createConfig(string path)
+        {
+            Config conf = new Config();
+            conf.message = "Сделайте гимнастику для глаз";
+            conf.timeRest = 15;
+            conf.timeWork = 1;
+            conf.timeRestSign = "m";
+            conf.timeWorkSign = "h";
 
+            MemoryStream stream = new MemoryStream();
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Config));
+            ser.WriteObject(stream, conf);
+            using (StreamWriter sr = new StreamWriter(path))
+            {
+                sr.Write(conf);
+            }
+        }
         private void _startAllWork()
         {
             foreach (var item in _items)
