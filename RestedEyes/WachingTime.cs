@@ -46,7 +46,7 @@ namespace RestedEyes
         private Stopwatch workWatch;
         private Stopwatch restWatch;
 
-        public ItemTime(int timeWork, int timeRest, string mesg)
+        public ItemTime(int timeWork, int timeRest, string mesg,string signTime="m")
         {
             this.worktime = new TimeSpan();
             this.rest = new TimeSpan();
@@ -54,17 +54,21 @@ namespace RestedEyes
             this.workWatch= new Stopwatch(); //отсчет времени работы
             this.restWatch = new Stopwatch(); //отсчет времени отдыха
 
-            this.worktime = getTimeSpan(timeWork); // врем на работу
-            this.rest = getTimeSpan(timeRest); // время на отдых
+            this.worktime = getTimeSpan(timeWork, signTime); // врем на работу
+            this.rest = getTimeSpan(timeRest, signTime); // время на отдых
         }
 
-        private TimeSpan getTimeSpan(int time)
+        private TimeSpan getTimeSpan(int time, string signTime)
         {
-            int seconds = 0;
-            int minutes = time;
-            int hours = 0;
+            TimeSpan result = new TimeSpan();
+            if (signTime.ToLower().Equals("s"))
+                result = TimeSpan.FromSeconds(time);
+            else if (signTime.ToLower().Equals("m"))
+                result = TimeSpan.FromMinutes(time);
+            else if (signTime.ToLower().Equals("h"))
+                result = TimeSpan.FromHours(time);
 
-            return new TimeSpan(hours, minutes, seconds);
+            return result;
         }
         /*Work*/
         public void startWork()
@@ -168,7 +172,7 @@ namespace RestedEyes
                 while ((s = sr.ReadLine()) != null)
                 {
                     string[] words = s.Split('|');
-                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2]));
+                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2], words[3]));
                 }
 
             }
