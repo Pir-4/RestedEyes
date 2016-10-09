@@ -190,23 +190,40 @@ namespace RestedEyes
 
         private void createConfig(string path)
         {
+            
             Config conf = new Config();
             conf.message = "Сделайте гимнастику для глаз";
             conf.timeRest = 15;
             conf.timeWork = 1;
             conf.timeRestSign = "m";
             conf.timeWorkSign = "h";
-
-           // MemoryStream stream = new MemoryStream();
-            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config));
+            Config conf2 = new Config();
+            conf2.message = "Сделайте гимнастику для глаз!!";
+            conf2.timeRest = 20;
+            conf2.timeWork = 2;
+            conf2.timeRestSign = "m";
+            conf2.timeWorkSign = "m";
+            Config[] confs = new Config[] {conf,conf2};
+            // MemoryStream stream = new MemoryStream();
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config[]));
             using (var stream = File.Create(path))
             {
-                js.WriteObject(stream, conf);
+                js.WriteObject(stream, confs);
+                //js.WriteObject(stream, conf2);
             }
             /*ser.WriteObject(stream, conf);
             using (StreamWriter sr = new StreamWriter(path))
             {
                 sr.Write(ser.);
+            }*/
+        }
+
+        private void raadConfing(string path )
+        {
+           /* DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config));
+            using (StreamReader sr = new StreamReader(path))
+            {
+                js.
             }*/
         }
         private void _startAllWork()
