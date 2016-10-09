@@ -197,13 +197,17 @@ namespace RestedEyes
             conf.timeRestSign = "m";
             conf.timeWorkSign = "h";
 
-            MemoryStream stream = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Config));
-            ser.WriteObject(stream, conf);
+           // MemoryStream stream = new MemoryStream();
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config));
+            using (var stream = File.Create(path))
+            {
+                js.WriteObject(stream, conf);
+            }
+            /*ser.WriteObject(stream, conf);
             using (StreamWriter sr = new StreamWriter(path))
             {
-                sr.Write(conf);
-            }
+                sr.Write(ser.);
+            }*/
         }
         private void _startAllWork()
         {
