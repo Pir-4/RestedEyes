@@ -11,12 +11,18 @@ namespace RestedEyes
     [DataContract]
     internal class Config
     {
-        [DataMember] internal string message;
-        [DataMember]internal int timeWork;
-        [DataMember]internal string timeWorkSign;
-        [DataMember] internal int timeRest;
-        [DataMember]internal string timeRestSign;
+        [DataMember]
+        internal string message;
+        [DataMember]
+        internal int timeWork;
+        [DataMember]
+        internal string timeWorkSign;
+        [DataMember]
+        internal int timeRest;
+        [DataMember]
+        internal string timeRestSign;
     }
+
     public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
 
     public interface IWachingTimeObserver
@@ -45,24 +51,25 @@ namespace RestedEyes
             restMsg = rMsg;
         }
     }
-    public struct ItemTime
+    public class ItemTime
     {
-        public TimeSpan worktime;
-        public TimeSpan rest;
-        public string mesg;
-        private Stopwatch workWatch;
-        private Stopwatch restWatch;
+        public TimeSpan worktime = TimeSpan.Zero;
+        public TimeSpan rest = TimeSpan.Zero;
+        public string mesg = "";
+        private Stopwatch workWatch = new Stopwatch();
+        private Stopwatch restWatch = new Stopwatch();
 
-        public ItemTime(int timeWork, int timeRest, string mesg,string signTime="m")
+        public void setMessage(string mes)
         {
-            this.worktime = new TimeSpan();
-            this.rest = new TimeSpan();
-            this.mesg = mesg; //сообщение в диалоговом окне
-            this.workWatch= new Stopwatch(); //отсчет времени работы
-            this.restWatch = new Stopwatch(); //отсчет времени отдыха
-
-            this.worktime = getTimeSpan(timeWork, signTime); // врем на работу
-            this.rest = getTimeSpan(timeRest, signTime); // время на отдых
+            this.mesg = mes;
+        }
+        public void setWork(int time, string sign)
+        {
+            this.worktime = getTimeSpan(time, sign); // врем на работу
+        }
+        public void setRest(int time, string sign)
+        {
+            this.rest = getTimeSpan(time, sign); // врем на работу
         }
 
         private TimeSpan getTimeSpan(int time, string signTime)
@@ -127,7 +134,7 @@ namespace RestedEyes
         
 
     }
-
+   
     public interface IWachingTime
     {
         void attach(IWachingTimeObserver imo);
@@ -171,60 +178,62 @@ namespace RestedEyes
         }
 
         private void _loadTime()
-        {
+        { 
+            string path = Directory.GetCurrentDirectory() + "\\ConfigTime.json";
+            if(!File.Exists(path))
+                createConfig(path);
 
-            string path = Directory.GetCurrentDirectory() + "\\ConfigTime.txt";
-            string path2 = Directory.GetCurrentDirectory() + "\\ConfigTime2.json";
-            createConfig(path2);
-            using (StreamReader sr = new StreamReader(path, Encoding.GetEncoding("windows-1251")))
+            Config[] configs = raadConfing(path);
+            foreach (var item in configs)
             {
-                string s = "";
-                while ((s = sr.ReadLine()) != null)
-                {
-                    string[] words = s.Split('|');
-                    _items.Add(new ItemTime(Int32.Parse(words[0]), Int32.Parse(words[1]), words[2], words[3]));
-                }
-
+                ItemTime tmp = new ItemTime();
+                tmp.setMessage(item.message);
+                tmp.setWork(item.timeWork,item.timeWorkSign);
+                tmp.setRest(item.timeRest,item.timeRestSign);
+                _items.Add(tmp);
             }
         }
 
         private void createConfig(string path)
         {
-            
             Config conf = new Config();
             conf.message = "Сделайте гимнастику для глаз";
             conf.timeRest = 15;
-            conf.timeWork = 1;
             conf.timeRestSign = "m";
+            conf.timeWork = 1;
             conf.timeWorkSign = "h";
+
             Config conf2 = new Config();
-            conf2.message = "Сделайте гимнастику для глаз!!";
-            conf2.timeRest = 20;
-            conf2.timeWork = 2;
+            conf2.message = "Сделайте гимнастику";
+            conf2.timeRest = 15;
             conf2.timeRestSign = "m";
-            conf2.timeWorkSign = "m";
-            Config[] confs = new Config[] {conf,conf2};
-            // MemoryStream stream = new MemoryStream();
+            conf2.timeWork = 2;
+            conf2.timeWorkSign = "h";
+
+            Config conf3 = new Config();
+            conf3.message = "Передохните";
+            conf3.timeRest = 2;
+            conf3.timeRestSign = "m";
+            conf3.timeWork = 30;
+            conf3.timeWorkSign = "m";
+
+
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config[]));
             using (var stream = File.Create(path))
             {
-                js.WriteObject(stream, confs);
-                //js.WriteObject(stream, conf2);
+                js.WriteObject(stream, new Config[] { conf, conf2, conf3});
             }
-            /*ser.WriteObject(stream, conf);
-            using (StreamWriter sr = new StreamWriter(path))
-            {
-                sr.Write(ser.);
-            }*/
         }
 
-        private void raadConfing(string path )
+        private Config[] raadConfing(string path )
         {
-           /* DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config));
-            using (StreamReader sr = new StreamReader(path))
+            Config[] confs;
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config[]));
+            using (var stream = File.Open(path,FileMode.Open))
             {
-                js.
-            }*/
+                confs = (Config[])js.ReadObject(stream);
+            }
+            return confs;
         }
         private void _startAllWork()
         {
