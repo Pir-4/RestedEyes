@@ -15,7 +15,7 @@ namespace RestedEyes
         static string _subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
         static string _keyName = _userRoot + "\\" + _subKey;
         static string _nameProgramm = "RestedEyes";
-        private static bool _isAutoloading = false;
+       // private static bool _isAutoloading = false;
 
         private static void addAutoloadingProgramm()
         {

@@ -40,19 +40,31 @@ namespace RestedEyes
     }
     public struct ItemTime
     {
-        public int worktime;
-        public int rest;
+        public TimeSpan worktime;
+        public TimeSpan rest;
         public string mesg;
         private Stopwatch workWatch;
         private Stopwatch restWatch;
 
         public ItemTime(int timeWork, int timeRest, string mesg)
         {
-            this.worktime = timeWork; // врем на работу
-            this.rest = timeRest; // время на отдых
+            this.worktime = new TimeSpan();
+            this.rest = new TimeSpan();
             this.mesg = mesg; //сообщение в диалоговом окне
             this.workWatch= new Stopwatch(); //отсчет времени работы
             this.restWatch = new Stopwatch(); //отсчет времени отдыха
+
+            this.worktime = getTimeSpan(timeWork); // врем на работу
+            this.rest = getTimeSpan(timeRest); // время на отдых
+        }
+
+        private TimeSpan getTimeSpan(int time)
+        {
+            int seconds = 0;
+            int minutes = time;
+            int hours = 0;
+
+            return new TimeSpan(hours, minutes, seconds);
         }
         /*Work*/
         public void startWork()
@@ -90,17 +102,18 @@ namespace RestedEyes
         public bool isWorkGone()
         {
             TimeSpan ts = this.workWatch.Elapsed;
-            if (ts.Minutes >= this.worktime)
+            if (ts >= this.worktime)
                 return true;
             return false;
         }
         public bool isRestGone()
         {
             TimeSpan ts = this.restWatch.Elapsed;
-            if (ts.Minutes >= this.rest)
+            if (ts >= this.rest)
                 return true;
             return false;
         }
+        
 
     }
 
@@ -161,6 +174,7 @@ namespace RestedEyes
             }
         }
 
+
         private void _startAllWork()
         {
             foreach (var item in _items)
@@ -197,7 +211,7 @@ namespace RestedEyes
             }
             _flagIsRest = true;
             _currentItem.startRest();
-            eventEndWork.Invoke(this, new WachingTimeEvent(_currentItem.rest, _currentItem.mesg));
+            eventEndWork.Invoke(this, new WachingTimeEvent(_currentItem.rest.Minutes, _currentItem.mesg));
 
         }
 
