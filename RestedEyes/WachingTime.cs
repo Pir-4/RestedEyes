@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Security;
 
 namespace RestedEyes
 {
@@ -54,8 +55,10 @@ namespace RestedEyes
     }
     public class ItemTime
     {
-        public TimeSpan worktime = TimeSpan.Zero;
-        public TimeSpan rest = TimeSpan.Zero;
+        private TimeSpan worktime = TimeSpan.Zero;
+        private string workSign = "";
+        private TimeSpan rest = TimeSpan.Zero;
+        private string restSign = "";
         public string mesg = "";
         private Stopwatch workWatch = new Stopwatch();
         private Stopwatch restWatch = new Stopwatch();
@@ -67,10 +70,21 @@ namespace RestedEyes
         public void setWork(int time, string sign)
         {
             this.worktime = getTimeSpan(time, sign); // врем на работу
+            this.workSign = sign;
+        }
+
+        public int getWorkTime()
+        {
+            return getTime(this.worktime, this.workSign);
+        }
+        public int getRestTime()
+        {
+            return getTime(this.rest, this.restSign);
         }
         public void setRest(int time, string sign)
         {
             this.rest = getTimeSpan(time, sign); // врем на работу
+            this.restSign = sign;
         }
 
         private TimeSpan getTimeSpan(int time, string signTime)
@@ -84,6 +98,18 @@ namespace RestedEyes
                 result = TimeSpan.FromHours(time);
 
             return result;
+        }
+
+        private int getTime(TimeSpan time, string signTime)
+        {
+            if (signTime.ToLower().Equals("s"))
+                return time.Seconds;
+            else if (signTime.ToLower().Equals("m"))
+                return time.Minutes;
+            else if (signTime.ToLower().Equals("h"))
+                return time.Hours;
+
+            return time.Minutes;
         }
         /*Work*/
         public void startWork()
@@ -266,7 +292,7 @@ namespace RestedEyes
         {
             foreach (var item in _items)
             {
-                if (item.worktime <= _currentItem.worktime)
+                if (item.getWorkTime() <= _currentItem.getWorkTime())
                 {
                     item.resetWork();
                     item.stopWork();
@@ -274,7 +300,7 @@ namespace RestedEyes
             }
             _flagIsRest = true;
             _currentItem.startRest();
-            eventEndWork.Invoke(this, new WachingTimeEvent(_currentItem.rest.Minutes, _currentItem.mesg));
+            eventEndWork.Invoke(this, new WachingTimeEvent(_currentItem.getRestTime(), _currentItem.mesg));
 
         }
 
@@ -286,7 +312,7 @@ namespace RestedEyes
                 _currentItem.resetRest();
                 _flagIsRest = false;
                 _startAllWork();
-                eventStartWork.Invoke(this, new WachingTimeEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
+                eventStartWork.Invoke(this, new WachingTimeEvent(_currentItem.getWorkTime(), _currentItem.mesg));
             }
     
         }
