@@ -29,6 +29,7 @@ namespace RestedEyes
     {
         void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
         void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e);
+        void updateStartWork(IWachingTime wachingTime, WachingTimeEvent e);
         void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e);
         void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e);
     }
@@ -158,6 +159,7 @@ namespace RestedEyes
         //***Event*********
         public event ModelHandler<WachingTime> eventCurrentTime;
         public event ModelHandler<WachingTime> eventEndWork;
+        public event ModelHandler<WachingTime> eventStartWork;
         public event ModelHandler<WachingTime> eventTimeRest;
         public event ModelHandler<WachingTime> eventTimeWork;
 
@@ -165,6 +167,7 @@ namespace RestedEyes
         {
             eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
             eventEndWork += new ModelHandler<WachingTime>(imo.updateEndWork);
+            eventStartWork += new ModelHandler<WachingTime>(imo.updateStartWork);
             eventTimeRest += new ModelHandler<WachingTime>(imo.updateTimeRest);
             eventTimeWork += new ModelHandler<WachingTime>(imo.updateTimeWork);
         }
@@ -283,6 +286,7 @@ namespace RestedEyes
                 _currentItem.resetRest();
                 _flagIsRest = false;
                 _startAllWork();
+                eventStartWork.Invoke(this, new WachingTimeEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
             }
     
         }

@@ -69,11 +69,15 @@ namespace RestedEyes
         {
             MessageBox.Show(e.restMsg, "Перерыв " + e.restTime.ToString() + " минут!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
+        public void updateStartWork(IWachingTime wachingTime, WachingTimeEvent e)
+        {
+            MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+        }
 
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
         {
             label2.Text = "Отдыха прошло " + e.restTime.ToString() + " минут";
-        }
+        } 
         public void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
             label3.Text = "Работаете " + e.restTime.ToString() + " минут";
