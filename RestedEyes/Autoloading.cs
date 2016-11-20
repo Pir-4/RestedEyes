@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
@@ -14,29 +15,31 @@ namespace RestedEyes
         static string _userRoot = "HKEY_CURRENT_USER";
         static string _subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
         static string _keyName = _userRoot + "\\" + _subKey;
-        static string _nameProgramm = "RestedEyes";
+        static string _programmPath = "";
+        
 
         private static void addAutoloadingProgramm()
         {
-                Registry.SetValue(_keyName,_nameProgramm, Application.ExecutablePath,RegistryValueKind.String);
+                Registry.SetValue(_keyName, _programmPath, Application.ExecutablePath,RegistryValueKind.String);
         }
         private static void removeAutoloadingProgramm()
         {
-            Registry.SetValue(_keyName, _nameProgramm, "", RegistryValueKind.String);
+            Registry.SetValue(_keyName, _programmPath, "", RegistryValueKind.String);
         }
 
-        public static bool isAutoloading()
+        public static bool isAutoloading(string programmPath)
         {
-              var flag = Registry.GetValue(_keyName, _nameProgramm, "");
+            _programmPath = programmPath;
+              var flag = Registry.GetValue(_keyName, _programmPath, "");
             if (flag.ToString().Equals(""))
                 return false;
 
             return true;
         }
 
-        public static bool AutoloadingProgramm()
+        public static bool AutoloadingProgramm(string programmPath)
         {
-            bool flag = isAutoloading();
+            bool flag = isAutoloading(programmPath);
             if (flag)
             {
                 removeAutoloadingProgramm();

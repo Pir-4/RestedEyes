@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace RestedEyes
 {
@@ -15,7 +10,9 @@ namespace RestedEyes
         private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
         IWachingTime wachingTime = new WachingTime();
         private bool isBreak = false;
-        
+        private string programmPaht = Application.ExecutablePath;
+
+
 
         public Form1()
         {
@@ -32,7 +29,7 @@ namespace RestedEyes
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Autoloading.AutoloadingProgramm())
+            if (Autoloading.AutoloadingProgramm(programmPaht))
             {
                 button1.Text = "Автозапуск: Убрать";
             }
@@ -50,7 +47,7 @@ namespace RestedEyes
         }
         private void InitializeButtonAutoloading()
         {
-            if (Autoloading.isAutoloading())
+            if (Autoloading.isAutoloading(programmPaht))
                 button1.Text = "Автозапуск: Убрать";
             else
                 button1.Text = "Автозапуск: Добавить";
