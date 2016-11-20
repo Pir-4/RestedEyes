@@ -11,6 +11,7 @@ namespace RestedEyes
         IWachingTime wachingTime = new WachingTime();
         private bool isBreak = false;
         private string programmPaht = Application.ExecutablePath;
+        private bool isMeeting = false;
 
 
 
@@ -66,12 +67,14 @@ namespace RestedEyes
         public void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
             label5.Text = e.restMsg + ". Перерыв " + e.restTime.ToString() + " минут!";
-            MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (!isMeeting)
+                MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
         public void updateStartWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
             label5.Text = "Пора работать!";
-            MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if(!isMeeting)
+                MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
 
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
@@ -91,6 +94,11 @@ namespace RestedEyes
             else
                 button2.Text = "Отошел";
             wachingTime.eventBreak();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            isMeeting = checkBox1.Checked;
         }
     }
 }
