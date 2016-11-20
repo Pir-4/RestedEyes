@@ -24,6 +24,7 @@ namespace RestedEyes
             label4.Text = wachingTime.eventStart();
             label2.Text = "Отдыха прошло 0 минут";
             label3.Text = "Работаете 0 минут";
+            label5.Text = "";
             button2.Text = "Отошел";
 
         }
@@ -64,10 +65,12 @@ namespace RestedEyes
 
         public void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            MessageBox.Show(e.restMsg, "Перерыв " + e.restTime.ToString() + " минут!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            label5.Text = e.restMsg + ". Перерыв " + e.restTime.ToString() + " минут!";
+            MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
         public void updateStartWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
+            label5.Text = "Пора работать!";
             MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
 

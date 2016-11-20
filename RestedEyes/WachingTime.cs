@@ -220,7 +220,7 @@ namespace RestedEyes
             conf.timeWorkSign = "h";
 
             Config conf2 = new Config();
-            conf2.message = "Сделайте гимнастику";
+            conf2.message = "Разомнитесь";
             conf2.timeRest = 15;
             conf2.timeRestSign = "m";
             conf2.timeWork = 2;
