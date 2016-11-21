@@ -16,25 +16,43 @@ namespace RestedEyes
         static string _subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
         static string _keyName = _userRoot + "\\" + _subKey;
         static string _programmPath = "";
-        
+        static string _programmName = "RestedEyes";
+
 
         private static void addAutoloadingProgramm()
         {
-                Registry.SetValue(_keyName, _programmPath, Application.ExecutablePath,RegistryValueKind.String);
+            _programmPath = addQuotes(_programmPath);
+                Registry.SetValue(_keyName, _programmName, _programmPath, RegistryValueKind.String);
         }
         private static void removeAutoloadingProgramm()
         {
-            Registry.SetValue(_keyName, _programmPath, "", RegistryValueKind.String);
+            Registry.SetValue(_keyName, _programmName,"", RegistryValueKind.String);
         }
 
+        private static string addQuotes(string value)
+        {
+            if (!value.StartsWith("\""))
+                value = "\"" + value;
+            if(!value.EndsWith("\""))
+                value = value + "\"";
+            return value;
+        }
+        private static string removeQuotes(string value)
+        {
+            if (value.StartsWith("\""))
+                value =  value.Substring(1);
+            if (value.EndsWith("\""))
+                value = value.Substring(0,value.Length-1);
+            return value;
+        }
         public static bool isAutoloading(string programmPath)
         {
             _programmPath = programmPath;
-              var flag = Registry.GetValue(_keyName, _programmPath, "");
-            if (flag.ToString().Equals(""))
-                return false;
+            var flag = Registry.GetValue(_keyName, _programmName, "");
+           if (!removeQuotes(flag.ToString()).Equals(_programmPath))
+               return false;
 
-            return true;
+           return true;
         }
 
         public static bool AutoloadingProgramm(string programmPath)
