@@ -18,6 +18,9 @@ namespace RestedEyes
         public Form1()
         {
             InitializeComponent();
+            this.MaximizeBox = false;
+            this.MaximumSize = this.Size;
+            this.MinimumSize = this.Size;
             InitializeButtonAutoloading();
             wachingTime.attach((IWachingTimeObserver)this);
             InitializeCurrentTimer();
@@ -66,7 +69,7 @@ namespace RestedEyes
 
         public void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            label5.Text = e.restMsg + ". Перерыв " + e.restTime.ToString() + " минут!";
+            label5.Text = "Перерыв " + e.restTime.ToString() + " минут!";
             if (!isMeeting)
                 MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
