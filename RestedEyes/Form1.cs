@@ -5,13 +5,15 @@ using System.IO;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form , IWachingTimeObserver
+    public partial class Form1 : Form , IWachingTimeObserver, IDetectProcessObserver
     {
         private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
         IWachingTime wachingTime = new WachingTime();
+        IDetectProcess detectProcess = new DetectProcess();
         private bool isBreak = false;
         private string programmPaht = Application.ExecutablePath;
         private bool isMeeting = false;
+        private bool isWinLogon = false;
 
 
 
@@ -23,6 +25,7 @@ namespace RestedEyes
             this.MinimumSize = this.Size;
             InitializeButtonAutoloading();
             wachingTime.attach((IWachingTimeObserver)this);
+            detectProcess.attach((IDetectProcessObserver)this);
             InitializeCurrentTimer();
 
             label4.Text = wachingTime.eventStart();
@@ -60,6 +63,7 @@ namespace RestedEyes
         void timer_Tick(object sender, EventArgs e)
         {
             wachingTime.eventTime();
+            detectProcess.checkWinlogon();
         }
 
         public void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e)
@@ -102,6 +106,35 @@ namespace RestedEyes
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMeeting = checkBox1.Checked;
+        }
+
+        public void updateWinlogon(DetectProcess detectProcess, DetectEvent e)
+        {
+            if (e.WinLogon && !isWinLogon)
+            {
+                writeFile("WinLogon\n");
+                isWinLogon = true;
+            }
+            else if(!e.WinLogon && isWinLogon)
+            {
+                writeFile("No\n");
+                isWinLogon = false;
+            }
+            
+        }
+
+        private void writeFile(string text)
+        {
+            string textFile = "";
+            using (StreamReader read = new StreamReader(@"E:\education\programs\process.txt"))
+            {
+                textFile = read.ReadToEnd();
+            }
+            textFile += text;
+            using (StreamWriter w = new StreamWriter(@"E:\education\programs\process.txt"))
+            {
+                w.Write(textFile);
+            }
         }
     }
 }
