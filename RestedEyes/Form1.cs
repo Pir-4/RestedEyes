@@ -86,12 +86,10 @@ namespace RestedEyes
 
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            //label2.Text = "Отдыха прошло " + e.restTime.ToString() + " минут";
             label2.Text = "Отдыха прошло " + e.restTime.ToString() + " " + e.restMsg;
         } 
         public void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            //label3.Text = "Работаете " + e.restTime.ToString() + " минут";
             label3.Text = "Работаете " + e.restTime.ToString() + " " + e.restMsg;
         }
 
