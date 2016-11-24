@@ -95,14 +95,19 @@ namespace RestedEyes
 
         private void button2_Click(object sender, EventArgs e)
         {
-            isBreak = !isBreak;
-            if(isBreak)
+            
+            eventBeak(isBreak);
+        }
+
+        private void eventBeak(bool flag)
+        {
+            isBreak = !flag;
+            if (isBreak)
                 button2.Text = "Подошел";
             else
                 button2.Text = "Отошел";
             wachingTime.eventBreak();
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMeeting = checkBox1.Checked;
@@ -112,13 +117,22 @@ namespace RestedEyes
         {
             if (e.WinLogon && !isWinLogon)
             {
-                writeFile("WinLogon\n");
                 isWinLogon = true;
+                if (!isBreak)
+                    eventBeak(isBreak);
+
+
             }
             else if(!e.WinLogon && isWinLogon)
             {
-                writeFile("No\n");
                 isWinLogon = false;
+                if (isBreak)
+                {
+                    DialogResult result = MessageBox.Show("Начать работать?", "Былк перерыв", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+                    if (DialogResult.Yes == result)
+                        eventBeak(isBreak);
+                }
+
             }
             
         }
