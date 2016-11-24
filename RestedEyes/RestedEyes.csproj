@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Autoloading.cs" />
+    <Compile Include="DetectProcess.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

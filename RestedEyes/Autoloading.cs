@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace RestedEyes
 {
-    public class Autoloading
+    public static class Autoloading
     {
         static string _userRoot = "HKEY_CURRENT_USER";
         static string _subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";

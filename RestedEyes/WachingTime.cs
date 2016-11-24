@@ -194,9 +194,9 @@ namespace RestedEyes
         }
 
         private void _loadTime()
-        { 
+        {
             string path = Directory.GetCurrentDirectory() + "\\ConfigTime.json";
-            if(!File.Exists(path))
+            if (!File.Exists(path))
                 createConfig(path);
 
             Config[] configs = raadConfing(path);
@@ -204,8 +204,8 @@ namespace RestedEyes
             {
                 ItemTime tmp = new ItemTime();
                 tmp.setMessage(item.message);
-                tmp.setWork(item.timeWork,item.timeWorkSign);
-                tmp.setRest(item.timeRest,item.timeRestSign);
+                tmp.setWork(item.timeWork, item.timeWorkSign);
+                tmp.setRest(item.timeRest, item.timeRestSign);
                 _items.Add(tmp);
             }
         }
@@ -237,20 +237,21 @@ namespace RestedEyes
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config[]));
             using (var stream = File.Create(path))
             {
-                js.WriteObject(stream, new Config[] { conf, conf2, conf3});
+                js.WriteObject(stream, new Config[] {conf, conf2, conf3});
             }
         }
 
-        private Config[] raadConfing(string path )
+        private Config[] raadConfing(string path)
         {
             Config[] confs;
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config[]));
-            using (var stream = File.Open(path,FileMode.Open))
+            using (var stream = File.Open(path, FileMode.Open))
             {
-                confs = (Config[])js.ReadObject(stream);
+                confs = (Config[]) js.ReadObject(stream);
             }
             return confs;
         }
+
         private void _startAllWork()
         {
             foreach (var item in _items)
@@ -302,7 +303,7 @@ namespace RestedEyes
                 _startAllWork();
                 eventStartWork.Invoke(this, new WachingTimeEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
             }
-    
+
         }
 
         private void breakCompare()
@@ -338,7 +339,7 @@ namespace RestedEyes
         {
             _currentTime = DateTime.Now;
             return _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" +
-                             _currentTime.Second.ToString();
+                   _currentTime.Second.ToString();
         }
 
         public void eventIsRest()
@@ -384,12 +385,13 @@ namespace RestedEyes
             _timeBreak.Start();
             if (!_flagIsBreak && !_flagIsRest)
             {
-                _timeBreak.Reset(); 
+                _timeBreak.Reset();
                 _timeBreak.Stop();
-               
+
             }
             eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Minutes, ""));
         }
+
         private void displayWorkTime()
         {
             _timeWork.Start();
@@ -400,6 +402,6 @@ namespace RestedEyes
             }
             eventTimeWork.Invoke(this, new WachingTimeEvent(_timeWork.Elapsed.Minutes, ""));
         }
-
+        
     }
 }
