@@ -389,7 +389,9 @@ namespace RestedEyes
                 _timeBreak.Stop();
 
             }
-            eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Minutes, ""));
+            displayTime(_timeBreak, true);
+            //eventTimeRest.Invoke(this, new WachingTimeEvent(_timeBreak.Elapsed.Minutes, ""));
+
         }
 
         private void displayWorkTime()
@@ -400,7 +402,34 @@ namespace RestedEyes
                 _timeWork.Reset();
                 _timeWork.Stop();
             }
-            eventTimeWork.Invoke(this, new WachingTimeEvent(_timeWork.Elapsed.Minutes, ""));
+            displayTime(_timeWork,false);
+            //eventTimeWork.Invoke(this, new WachingTimeEvent(_timeWork.Elapsed.Minutes, ""));
+
+        }
+
+        private void displayTime(Stopwatch time, bool restWork)
+        {
+            string msg = "минут";
+            int value = 0;
+            if (time.Elapsed.Minutes != 0)
+            {
+                value = time.Elapsed.Minutes;
+                msg = "минут";
+            }
+            else if (time.Elapsed.Seconds != 0)
+            {
+                value = time.Elapsed.Seconds;
+                msg = "секунд";
+            }
+            else if (time.Elapsed.Hours != 0)
+            {
+                value = time.Elapsed.Hours;
+                msg = "часов";
+            }
+            if(restWork)
+                eventTimeRest.Invoke(this, new WachingTimeEvent(value, msg));
+            else
+                eventTimeWork.Invoke(this, new WachingTimeEvent(value, msg));
         }
         
     }

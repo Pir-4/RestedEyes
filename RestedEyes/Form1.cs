@@ -86,11 +86,13 @@ namespace RestedEyes
 
         public void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            label2.Text = "Отдыха прошло " + e.restTime.ToString() + " минут";
+            //label2.Text = "Отдыха прошло " + e.restTime.ToString() + " минут";
+            label2.Text = "Отдыха прошло " + e.restTime.ToString() + " " + e.restMsg;
         } 
         public void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e)
         {
-            label3.Text = "Работаете " + e.restTime.ToString() + " минут";
+            //label3.Text = "Работаете " + e.restTime.ToString() + " минут";
+            label3.Text = "Работаете " + e.restTime.ToString() + " " + e.restMsg;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -120,35 +122,18 @@ namespace RestedEyes
                 isWinLogon = true;
                 if (!isBreak)
                     eventBeak(isBreak);
-
-
             }
             else if(!e.WinLogon && isWinLogon)
             {
                 isWinLogon = false;
                 if (isBreak)
                 {
-                    DialogResult result = MessageBox.Show("Начать работать?", "Былк перерыв", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+                    DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                     if (DialogResult.Yes == result)
                         eventBeak(isBreak);
                 }
-
             }
             
-        }
-
-        private void writeFile(string text)
-        {
-            string textFile = "";
-            using (StreamReader read = new StreamReader(@"E:\education\programs\process.txt"))
-            {
-                textFile = read.ReadToEnd();
-            }
-            textFile += text;
-            using (StreamWriter w = new StreamWriter(@"E:\education\programs\process.txt"))
-            {
-                w.Write(textFile);
-            }
         }
     }
 }
