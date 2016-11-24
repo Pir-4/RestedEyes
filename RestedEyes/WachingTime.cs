@@ -269,6 +269,7 @@ namespace RestedEyes
                 item.startRest();
         }
 
+
         private void _resetAllrest()
         {
             foreach (var item in _items)
