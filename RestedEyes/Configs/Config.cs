@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace RestedEyes.Configs
 {
     [DataContract]
-    internal class Config
+    public class Config
     {
         [DataMember]
         internal string message;
