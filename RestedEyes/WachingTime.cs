@@ -6,24 +6,10 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Security;
+using RestedEyes.Configs;
 
 namespace RestedEyes
-{
-    [DataContract]
-    internal class Config
-    {
-        [DataMember]
-        internal string message;
-        [DataMember]
-        internal int timeWork;
-        [DataMember]
-        internal string timeWorkSign;
-        [DataMember]
-        internal int timeRest;
-        [DataMember]
-        internal string timeRestSign;
-    }
-
+{ 
     public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
 
     public interface IWachingTimeObserver
