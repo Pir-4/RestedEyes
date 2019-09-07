@@ -7,11 +7,11 @@ using System.Timers;
 
 namespace RestedEyes.Timers
 {
-    public class TickTime : IDisposable
+    public class TickTimer : IDisposable
     {
         private Timer _timer;
         private delegate void ModelHandler<TickTime>(TickTime sender, DateTime dateTime);
-        private event ModelHandler<TickTime> _eventTick;
+        private event ModelHandler<TickTimer> _eventTick;
 
         public void Start(int interval = 1000)
         {
@@ -27,12 +27,12 @@ namespace RestedEyes.Timers
 
         public void Attach(ITimerObserver observer)
         {
-            _eventTick += new ModelHandler<TickTime>(observer.Tick);       
+            _eventTick += new ModelHandler<TickTimer>(observer.Tick);       
         }
 
         public void Detach(ITimerObserver observer)
         {
-            _eventTick -= new ModelHandler<TickTime>(observer.Tick);
+            _eventTick -= new ModelHandler<TickTimer>(observer.Tick);
         }
 
         private void TickCallback(Object source, ElapsedEventArgs e)

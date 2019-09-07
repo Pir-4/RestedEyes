@@ -8,6 +8,6 @@ namespace RestedEyes.Timers
 {
     public interface ITimerObserver
     {
-        void Tick(TickTime timer, DateTime dateTime);
+        void Tick(TickTimer timer, DateTime dateTime);
     }
 }
