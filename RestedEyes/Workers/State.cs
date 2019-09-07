@@ -11,5 +11,7 @@ namespace RestedEyes.Workers
         None,
         ToWork,
         ToRest,
+        Work,
+        Rest,
     }
 }
