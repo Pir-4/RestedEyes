@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 
 namespace RestedEyes.Timers
@@ -10,7 +6,7 @@ namespace RestedEyes.Timers
     public class TickTimer : IDisposable
     {
         private Timer _timer;
-        private delegate void ModelHandler<TickTime>(TickTime sender, DateTime dateTime);
+        private delegate void ModelHandler<TickTimer>(TickTimer sender, DateTime dateTime);
         private event ModelHandler<TickTimer> _eventTick;
 
         public void Start(int interval = 1000)

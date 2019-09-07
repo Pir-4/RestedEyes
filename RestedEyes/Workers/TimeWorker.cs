@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RestedEyes.Timers;
 using RestedEyes.Configs;
 
 namespace RestedEyes.Workers
 {
-    public class TimeWorker : ITimeWorker, Timers.ITimerObserver
+    public class TimeWorker : ITimeWorker, ITimerObserver
     {
         private readonly Config _config;
         private readonly TimeSpan _workTime;
