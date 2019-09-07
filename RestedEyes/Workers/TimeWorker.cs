@@ -28,7 +28,6 @@ namespace RestedEyes.Workers
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
-            ;
         }
 
         private TimeSpan ToTimeSpan(int time, string signTime)

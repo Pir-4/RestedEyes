@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Threading;
 
 namespace RestedEyes.Timers
 {
@@ -15,8 +15,7 @@ namespace RestedEyes.Timers
 
         public void Start(int interval = 1000)
         {
-            _timer = new Timer(interval);
-            _timer.Elapsed += TickCallback;
+            _timer = new Timer(TickCallback, null, interval, interval);
         }
 
         public void Dispose()
@@ -35,11 +34,10 @@ namespace RestedEyes.Timers
             _eventTick -= new ModelHandler<TickTimer>(observer.Tick);
         }
 
-        private void TickCallback(Object source, ElapsedEventArgs e)
+        private void TickCallback(Object obj)
         {
             if(_eventTick != null)
-                _eventTick.Invoke(this, e.SignalTime);
-            
+                _eventTick.Invoke(this, new DateTime());            
         }
     }
 }
