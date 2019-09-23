@@ -9,7 +9,7 @@ namespace RestedEyes
     public partial class Form1 : Form , IModelObserver, IDetectProcessObserver
     {
         private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
-        IModel wachingTime = new WachingTime();
+        IModel wachingTime = new Model();//new WachingTime();
         IDetectProcess detectProcess = new DetectProcess();
         private bool isBreak = false;
         private string programmPaht = Application.ExecutablePath;
@@ -51,8 +51,8 @@ namespace RestedEyes
         private void InitializeCurrentTimer()
         {
             _currentTimer.Interval = 1000;
-            _currentTimer.Tick += new EventHandler(timer_Tick);
-            _currentTimer.Start();
+            //_currentTimer.Tick += new EventHandler(timer_Tick);
+            //_currentTimer.Start();
         }
         private void InitializeButtonAutoloading()
         {
@@ -67,37 +67,37 @@ namespace RestedEyes
             detectProcess.checkWinlogon();
         }
 
-        public void updateCurrentTime(IModel wachingTime, WachingTimeEvent e)
+        public void updateCurrentTime(IModel wachingTime, ModelEvent e)
         {
             // TODO remove
             //label1.Text = e.currentTime; 
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
-        {
-            label1.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
+        { 
+            //label1.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
         }
 
-        public void updateEndWork(IModel wachingTime, WachingTimeEvent e)
+        public void updateEndWork(IModel wachingTime, ModelEvent e)
         {
-            label5.Text = "Перерыв " + e.restTime.ToString() + " минут!";
+            label5.Text = "Перерыв ";// + e.restTime.ToString() + " минут!";
             if (!isMeeting)
                 MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
-        public void updateStartWork(IModel wachingTime, WachingTimeEvent e)
+        public void updateStartWork(IModel wachingTime, ModelEvent e)
         {
             label5.Text = "Пора работать!";
             if(!isMeeting)
                 MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
 
-        public void updateTimeRest(IModel wachingTime, WachingTimeEvent e)
+        public void updateTimeRest(IModel wachingTime, ModelEvent e)
         {
-            label2.Text = "Отдыха прошло " + e.restTime.ToString() + " " + e.restMsg;
+            label2.Text = "Отдыха прошло ";// + e.restTime.ToString() + " " + e.restMsg;
         } 
-        public void updateTimeWork(IModel wachingTime, WachingTimeEvent e)
+        public void updateTimeWork(IModel wachingTime, ModelEvent e)
         {
-            label3.Text = "Работаете " + e.restTime.ToString() + " " + e.restMsg;
+            label3.Text = "Работаете ";// + e.restTime.ToString() + " " + e.restMsg;
         }
 
         private void button2_Click(object sender, EventArgs e)

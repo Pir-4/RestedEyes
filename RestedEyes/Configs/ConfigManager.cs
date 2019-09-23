@@ -64,6 +64,13 @@ namespace RestedEyes.Configs
                 timeRestSign = "m",
                 timeWork = 30,
                 timeWorkSign = "m"
+             },
+              new Config() {
+                message = "Передохните-test",
+                timeRest = 10,
+                timeRestSign = "s",
+                timeWork = 10,
+                timeWorkSign = "s"
              }
             };
         }

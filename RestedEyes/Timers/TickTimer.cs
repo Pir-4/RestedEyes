@@ -42,7 +42,7 @@ namespace RestedEyes.Timers
         private void TickCallback(Object obj)
         {
             if(_eventTick != null)
-                _eventTick.Invoke(this, new DateTime());            
+                _eventTick.Invoke(this, DateTime.Now);            
         }
     }
 }

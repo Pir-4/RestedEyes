@@ -11,27 +11,8 @@ using RestedEyes.Configs;
 
 namespace RestedEyes
 { 
-    public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
+    public delegate void ModelHandler<IModel>(IModel sender, ModelEvent e);   
     
-    public class WachingTimeEvent : EventArgs
-    {
-        public string currentTime;
-
-        public int restTime;
-        public string restMsg;
-
-
-        public WachingTimeEvent(string currtime)
-        {
-            currentTime = currtime;
-        }
-
-        public WachingTimeEvent(int rTime, string rMsg)
-        {
-            restTime = rTime;
-            restMsg = rMsg;
-        }
-    }
     public class ItemTime
     {
         public TimeSpan worktime = TimeSpan.Zero;
@@ -267,7 +248,7 @@ namespace RestedEyes
             }
             _flagIsRest = true;
             _currentItem.startRest();
-            eventEndWork.Invoke(this, new WachingTimeEvent(_currentItem.rest.Minutes, _currentItem.mesg));
+            eventEndWork.Invoke(this, new ModelEvent(_currentItem.rest.Minutes, _currentItem.mesg));
 
         }
 
@@ -279,7 +260,7 @@ namespace RestedEyes
                 _currentItem.resetRest();
                 _flagIsRest = false;
                 _startAllWork();
-                eventStartWork.Invoke(this, new WachingTimeEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
+                eventStartWork.Invoke(this, new ModelEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
             }
 
         }
@@ -310,7 +291,7 @@ namespace RestedEyes
             _currentTime = DateTime.Now;
             string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" +
                              _currentTime.Second.ToString();
-            eventCurrentTime.Invoke(this, new WachingTimeEvent(curtime));
+            eventCurrentTime.Invoke(this, new ModelEvent(curtime));
         }
 
         public string eventStart()
@@ -405,9 +386,9 @@ namespace RestedEyes
                 msg = "часов";
             }
             if(restWork)
-                eventTimeRest.Invoke(this, new WachingTimeEvent(value, msg));
+                eventTimeRest.Invoke(this, new ModelEvent(value, msg));
             else
-                eventTimeWork.Invoke(this, new WachingTimeEvent(value, msg));
+                eventTimeWork.Invoke(this, new ModelEvent(value, msg));
         }
         
     }

@@ -9,10 +9,10 @@ namespace RestedEyes
 {
     public interface IModelObserver : ITimerObserver
     {
-        void updateCurrentTime(IModel wachingTime, WachingTimeEvent e);//TODO remove
-        void updateEndWork(IModel wachingTime, WachingTimeEvent e);
-        void updateStartWork(IModel wachingTime, WachingTimeEvent e);
-        void updateTimeRest(IModel wachingTime, WachingTimeEvent e);
-        void updateTimeWork(IModel wachingTime, WachingTimeEvent e);
+        void updateCurrentTime(IModel wachingTime, ModelEvent e);//TODO remove
+        void updateEndWork(IModel wachingTime, ModelEvent e);
+        void updateStartWork(IModel wachingTime, ModelEvent e);
+        void updateTimeRest(IModel wachingTime, ModelEvent e);
+        void updateTimeWork(IModel wachingTime, ModelEvent e);
     }
 }

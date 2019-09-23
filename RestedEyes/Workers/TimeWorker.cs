@@ -11,16 +11,15 @@ namespace RestedEyes.Workers
         private delegate void ModelHandler<ITimeWorker>(ITimeWorker worker, State state);
         private event ModelHandler<TimeWorker> _eventState;
 
-        private readonly Config _config;
         private readonly TimeSpan _workTime;
         private readonly TimeSpan _restTime;
         private TimeSpan _lastTimeSpan;
          
         private TimeWorker(Config config)
         {
-            _config = config;
-            _workTime = ToTimeSpan(_config.timeWork, _config.timeWorkSign);
-            _restTime = ToTimeSpan(_config.timeRest, _config.timeRestSign);
+            Config = config;
+            _workTime = ToTimeSpan(Config.timeWork, Config.timeWorkSign);
+            _restTime = ToTimeSpan(Config.timeRest, Config.timeRestSign);
         }
 
         public static ITimeWorker Create(Config config)
@@ -35,9 +34,12 @@ namespace RestedEyes.Workers
 
         public void Attach(ITimeWorkerObserver observer)
         {
-            _eventState += new ModelHandler<TimeWorker>(observer.SetState);
+            _eventState += new ModelHandler<TimeWorker>(observer.ChangeState);
         }
+
         public State State { get; set; } = State.None;
+
+        public Config Config { get; private set; }
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
@@ -46,13 +48,20 @@ namespace RestedEyes.Workers
             {
                 _lastTimeSpan = currentTimeSpan;
                 _eventState.Invoke(this, State.ToRest);
+                State = State.Rest;
             }
             if (State == State.Rest && (currentTimeSpan - _lastTimeSpan) > _workTime)
             {
                 _lastTimeSpan = currentTimeSpan;
                 _eventState.Invoke(this, State.ToWork);
+                State = State.Work;
             }
 
+        }
+
+        public void Start()
+        {
+            _lastTimeSpan = DateTime.Now.TimeOfDay;
         }
 
         private TimeSpan ToTimeSpan(int time, string signTime)

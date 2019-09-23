@@ -8,6 +8,6 @@ namespace RestedEyes.Workers
 {
     public interface ITimeWorkerObserver
     {
-        void SetState(ITimeWorker worker, State state);
+        void ChangeState(ITimeWorker worker, State state);
     }
 }
