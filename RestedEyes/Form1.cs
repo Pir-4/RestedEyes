@@ -90,11 +90,11 @@ namespace RestedEyes
             }            
         }
 
-        public void updateEndWork(IModel wachingTime, ModelEvent e)
+        public void RaiseMessageAboutEndWork(IModel wachingTime, ModelEvent e)
         {
             if (label5.InvokeRequired)
             {
-                var d = new ModelEventSafeCallDelegate(updateEndWork);
+                var d = new ModelEventSafeCallDelegate(RaiseMessageAboutEndWork);
                 label5.Invoke(d, new object[] { wachingTime, e });
             }
             else
@@ -106,11 +106,11 @@ namespace RestedEyes
             }
         }
 
-        public void updateStartWork(IModel wachingTime, ModelEvent e)
+        public void RaiseMessageAboutStartWork(IModel wachingTime, ModelEvent e)
         {
             if (label5.InvokeRequired)
             {
-                var d = new ModelEventSafeCallDelegate(updateStartWork);
+                var d = new ModelEventSafeCallDelegate(RaiseMessageAboutStartWork);
                 label5.Invoke(d, new object[] { wachingTime, e });
             }
             else
@@ -122,11 +122,11 @@ namespace RestedEyes
             }
         }
 
-        public void updateTimeRest(IModel wachingTime, ModelEvent e)
+        public void UpdateRestTimeLabel(IModel wachingTime, ModelEvent e)
         {
             if (label2.InvokeRequired)
             {
-                var d = new ModelEventSafeCallDelegate(updateTimeRest);
+                var d = new ModelEventSafeCallDelegate(UpdateRestTimeLabel);
                 label2.Invoke(d, new object[] { wachingTime, e });
             }
             else
@@ -135,11 +135,11 @@ namespace RestedEyes
             }
         }
 
-        public void updateTimeWork(IModel wachingTime, ModelEvent e)
+        public void UpdateWorkRaiseLabel(IModel wachingTime, ModelEvent e)
         {
             if (label3.InvokeRequired)
             {
-                var d = new ModelEventSafeCallDelegate(updateTimeRest);
+                var d = new ModelEventSafeCallDelegate(UpdateRestTimeLabel);
                 label3.Invoke(d, new object[] { wachingTime, e });
             }
             else

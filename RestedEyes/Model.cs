@@ -20,8 +20,8 @@ namespace RestedEyes
         //***Event*********
         public event ModelHandler<Model> eventEndWork;
         public event ModelHandler<Model> eventStartWork;
-        public event ModelHandler<Model> eventTimeRest;
-        public event ModelHandler<Model> eventTimeWork;
+        public event ModelHandler<Model> eventUpdateRestTime;
+        public event ModelHandler<Model> eventUpdateWorkTime;
 
         public Model()
         {
@@ -31,14 +31,14 @@ namespace RestedEyes
             _timer.Attach(_workers);            
         }
 
-        public void attach(IModelObserver imo)
+        public void attach(IModelObserver observer)
         {
-            _timer.Attach(imo);
+            _timer.Attach(observer);
 
-            eventEndWork += new ModelHandler<Model>(imo.updateEndWork);
-            eventStartWork += new ModelHandler<Model>(imo.updateStartWork);
-            eventTimeRest += new ModelHandler<Model>(imo.updateTimeRest);
-            eventTimeWork += new ModelHandler<Model>(imo.updateTimeWork);
+            eventEndWork += new ModelHandler<Model>(observer.RaiseMessageAboutEndWork);
+            eventStartWork += new ModelHandler<Model>(observer.RaiseMessageAboutStartWork);
+            eventUpdateRestTime += new ModelHandler<Model>(observer.UpdateRestTimeLabel);
+            eventUpdateWorkTime += new ModelHandler<Model>(observer.UpdateWorkRaiseLabel);
         }
 
         public void eventTime()
