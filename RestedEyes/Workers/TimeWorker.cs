@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using RestedEyes.Timers;
 using RestedEyes.Configs;
 
 namespace RestedEyes.Workers
 {
-    public class TimeWorker : ITimeWorker, ITimerObserver
+    public class TimeWorker : ITimeWorker
     {
         private delegate void ModelHandler<ITimeWorker>(ITimeWorker worker, State state);
         private event ModelHandler<TimeWorker> _eventState;
@@ -21,9 +23,14 @@ namespace RestedEyes.Workers
             _restTime = ToTimeSpan(_config.timeRest, _config.timeRestSign);
         }
 
-        public static TimeWorker Create(Config config)
+        public static ITimeWorker Create(Config config)
         {
             return new TimeWorker(config);
+        }
+
+        public static IEnumerable<ITimeWorker> Create(IEnumerable<Config> configs)
+        {
+            return configs.Select(item => TimeWorker.Create(item));
         }
 
         public void Attach(ITimeWorkerObserver observer)

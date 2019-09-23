@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RestedEyes.Timers
 {
@@ -25,10 +27,17 @@ namespace RestedEyes.Timers
             _eventTick += new ModelHandler<TickTimer>(observer.Tick);       
         }
 
+        public void Attach(IEnumerable<ITimerObserver> observers)
+        {
+            observers.ToList().ForEach(item => this.Attach(item));
+        }
+
         public void Detach(ITimerObserver observer)
         {
             _eventTick -= new ModelHandler<TickTimer>(observer.Tick);
         }
+
+        public DateTime Now() => DateTime.Now;
 
         private void TickCallback(Object obj)
         {

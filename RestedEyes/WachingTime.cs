@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.IO;
@@ -11,15 +12,7 @@ using RestedEyes.Configs;
 namespace RestedEyes
 { 
     public delegate void ModelHandler<IWachingTime>(IWachingTime sender, WachingTimeEvent e);
-
-    public interface IWachingTimeObserver
-    {
-        void updateCurrentTime(IWachingTime wachingTime, WachingTimeEvent e);
-        void updateEndWork(IWachingTime wachingTime, WachingTimeEvent e);
-        void updateStartWork(IWachingTime wachingTime, WachingTimeEvent e);
-        void updateTimeRest(IWachingTime wachingTime, WachingTimeEvent e);
-        void updateTimeWork(IWachingTime wachingTime, WachingTimeEvent e);
-    }
+    
     public class WachingTimeEvent : EventArgs
     {
         public string currentTime;
@@ -133,17 +126,9 @@ namespace RestedEyes
         }
         
 
-    }
-   
-    public interface IWachingTime
-    {
-        void attach(IWachingTimeObserver imo);
-        void eventTime();
-        void eventBreak();
-        string eventStart();
-    }
-
-    class WachingTime : IWachingTime
+    } 
+    
+    class WachingTime : IModel
     {
 
         private List<ItemTime> _items = new List<ItemTime>();
@@ -162,7 +147,7 @@ namespace RestedEyes
         public event ModelHandler<WachingTime> eventTimeRest;
         public event ModelHandler<WachingTime> eventTimeWork;
 
-        public void attach(IWachingTimeObserver imo)
+        public void attach(IModelObserver imo)
         {
             eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
             eventEndWork += new ModelHandler<WachingTime>(imo.updateEndWork);
@@ -177,6 +162,13 @@ namespace RestedEyes
         {
             _loadTime();
             _startAllWork();
+
+            //
+           var _timer = new Timers.TickTimer();
+           var configs = RestedEyes.Configs.ConfigManager.ConfigsDefault();
+           var worker = RestedEyes.Workers.TimeWorker.Create(configs.ToList()[0]);
+            _timer.Attach(worker);
+            _timer.Start();
         }
 
         private void _loadTime()

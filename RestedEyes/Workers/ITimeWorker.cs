@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RestedEyes.Timers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace RestedEyes.Workers
 {
-    public interface ITimeWorker
+    public interface ITimeWorker : ITimerObserver
     {
-        State SetState { get; set; }
+        State State { get; set; }
     }
 }
