@@ -3,11 +3,15 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using RestedEyes.Timers;
 using System.IO;
+using System.Threading;
 
 namespace RestedEyes
 {
     public partial class Form1 : Form , IModelObserver, IDetectProcessObserver
     {
+        private delegate void TickSafeCallDelegate(TickTimer timer, DateTime dateTime);
+        private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
+
         private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
         IModel wachingTime = new Model();//new WachingTime();
         IDetectProcess detectProcess = new DetectProcess();
@@ -74,30 +78,74 @@ namespace RestedEyes
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
-        { 
-            //label1.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
+        {
+            if (label1.InvokeRequired)
+            {
+                var d = new TickSafeCallDelegate(Tick);
+                label1.Invoke(d, new object[] { timer,dateTime });
+            }
+            else
+            {
+                label1.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
+            }            
         }
 
         public void updateEndWork(IModel wachingTime, ModelEvent e)
         {
-            label5.Text = "Перерыв ";// + e.restTime.ToString() + " минут!";
-            if (!isMeeting)
-                MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (label5.InvokeRequired)
+            {
+                var d = new ModelEventSafeCallDelegate(updateEndWork);
+                label5.Invoke(d, new object[] { wachingTime, e });
+            }
+            else
+            {
+                label5.Text = "Перерыв " + e.restTime.ToString() + " минут!";
+                if (!isMeeting)
+                    MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
+                        MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            }
         }
+
         public void updateStartWork(IModel wachingTime, ModelEvent e)
         {
-            label5.Text = "Пора работать!";
-            if(!isMeeting)
-                MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (label5.InvokeRequired)
+            {
+                var d = new ModelEventSafeCallDelegate(updateStartWork);
+                label5.Invoke(d, new object[] { wachingTime, e });
+            }
+            else
+            {
+                label5.Text = "Пора работать!";
+                if (!isMeeting)
+                    MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
+                        MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            }
         }
 
         public void updateTimeRest(IModel wachingTime, ModelEvent e)
         {
-            label2.Text = "Отдыха прошло ";// + e.restTime.ToString() + " " + e.restMsg;
-        } 
+            if (label2.InvokeRequired)
+            {
+                var d = new ModelEventSafeCallDelegate(updateTimeRest);
+                label2.Invoke(d, new object[] { wachingTime, e });
+            }
+            else
+            {
+                label2.Text = "Отдыха прошло " + e.restTime.ToString() + " " + e.restMsg;
+            }
+        }
+
         public void updateTimeWork(IModel wachingTime, ModelEvent e)
         {
-            label3.Text = "Работаете ";// + e.restTime.ToString() + " " + e.restMsg;
+            if (label3.InvokeRequired)
+            {
+                var d = new ModelEventSafeCallDelegate(updateTimeRest);
+                label3.Invoke(d, new object[] { wachingTime, e });
+            }
+            else
+            {
+                label3.Text = "Работаете " + e.restTime.ToString() + " " + e.restMsg;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
