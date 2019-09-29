@@ -50,7 +50,7 @@ namespace RestedEyes.Workers
                 _eventState.Invoke(this, State.ToRest);
                 State = State.Rest;
             }
-            if (State == State.Rest && (currentTimeSpan - _lastTimeSpan) > _workTime)
+            if (State == State.Rest && (currentTimeSpan - _lastTimeSpan) > _restTime)
             {
                 _lastTimeSpan = currentTimeSpan;
                 _eventState.Invoke(this, State.ToWork);
