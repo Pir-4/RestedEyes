@@ -19,8 +19,11 @@ namespace RestedEyes
 
         IEnumerable<Config> _configs;
         List<ITimeWorker> _workers;
+
         State _currentState = State.None;
         TimeSpan _saveTime;
+
+        bool _isWinLogon = false;
 
         //***Event*********
         event ModelHandler<Model> eventEndWork;
@@ -108,7 +111,11 @@ namespace RestedEyes
 
         public void UpdateWinlogon(WinLogonDetect detectProcess, DetectEvent e)
         {
-            eventWinLogonInfo.Invoke(this, new ModelEvent(e.WinLogon ? 1 : 0, ""));
+            if (_isWinLogon && !e.WinLogon)//detect when winlogon window is hiding
+            {
+                eventWinLogonInfo.Invoke(this, new ModelEvent(0, ""));
+            }
+            _isWinLogon = e.WinLogon;
         }
     }
 }

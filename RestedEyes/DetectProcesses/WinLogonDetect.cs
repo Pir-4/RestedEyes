@@ -41,5 +41,4 @@ namespace RestedEyes.DetectProcesses
             this.CheckWinlogon();
         }
     }
-
 }
