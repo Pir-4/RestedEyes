@@ -7,12 +7,12 @@ using System.Threading;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form , IModelObserver//, IDetectProcessObserver
+    public partial class Form1 : Form, IModelObserver//, IDetectProcessObserver
     {
         private delegate void TickSafeCallDelegate(TickTimer timer, DateTime dateTime);
         private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
 
-       // private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
+        // private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
         IModel wachingTime = new Model();
         //IDetectProcess detectProcess = new DetectProcess();
 
@@ -68,28 +68,28 @@ namespace RestedEyes
                 button1.Text = "Автозапуск: Добавить";
         }
 
-       /* void timer_Tick(object sender, EventArgs e)
-        {
-           // detectProcess.CheckWinlogon();
-        }*/
+        /* void timer_Tick(object sender, EventArgs e)
+         {
+            // detectProcess.CheckWinlogon();
+         }*/
 
-       /* public void updateCurrentTime(IModel wachingTime, ModelEvent e)
-        {
-            // TODO remove
-            //label1.Text = e.currentTime; 
-        }*/
+        /* public void updateCurrentTime(IModel wachingTime, ModelEvent e)
+         {
+             // TODO remove
+             //label1.Text = e.currentTime; 
+         }*/
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
             if (label1.InvokeRequired)
             {
                 var d = new TickSafeCallDelegate(Tick);
-                label1.Invoke(d, new object[] { timer,dateTime });
+                label1.Invoke(d, new object[] { timer, dateTime });
             }
             else
             {
                 label1.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
-            }            
+            }
         }
 
         public void RaiseMessageAboutEndWork(IModel wachingTime, ModelEvent e)
@@ -152,7 +152,7 @@ namespace RestedEyes
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+
             eventBreak(isBreak);
         }
 
@@ -192,12 +192,11 @@ namespace RestedEyes
 
         public void UpdateWinlogon(IModel wachingTime, ModelEvent e)
         {
-            if (e.restTime == 0)
-            {
-                DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
-                if (DialogResult.Yes == result)
-                    eventBreak(true);
-            }
+            DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (DialogResult.Yes == result)
+                eventBreak(true);
+
         }
     }
 }
