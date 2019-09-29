@@ -13,7 +13,7 @@ namespace RestedEyes
         private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
 
         private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
-        IModel wachingTime = new Model();//new WachingTime();
+        IModel wachingTime = new Model();
         IDetectProcess detectProcess = new DetectProcess();
         private bool isBreak = false;
         private string programmPaht = Application.ExecutablePath;
@@ -67,7 +67,6 @@ namespace RestedEyes
         }
         void timer_Tick(object sender, EventArgs e)
         {
-            wachingTime.eventTime();
             detectProcess.checkWinlogon();
         }
 
@@ -135,11 +134,11 @@ namespace RestedEyes
             }
         }
 
-        public void UpdateWorkRaiseLabel(IModel wachingTime, ModelEvent e)
+        public void UpdateWorkTimeLabel(IModel wachingTime, ModelEvent e)
         {
             if (label3.InvokeRequired)
             {
-                var d = new ModelEventSafeCallDelegate(UpdateRestTimeLabel);
+                var d = new ModelEventSafeCallDelegate(UpdateWorkTimeLabel);
                 label3.Invoke(d, new object[] { wachingTime, e });
             }
             else

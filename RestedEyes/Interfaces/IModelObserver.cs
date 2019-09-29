@@ -15,6 +15,6 @@ namespace RestedEyes
         void RaiseMessageAboutStartWork(IModel wachingTime, ModelEvent e);
 
         void UpdateRestTimeLabel(IModel wachingTime, ModelEvent e);
-        void UpdateWorkRaiseLabel(IModel wachingTime, ModelEvent e);
+        void UpdateWorkTimeLabel(IModel wachingTime, ModelEvent e);
     }
 }

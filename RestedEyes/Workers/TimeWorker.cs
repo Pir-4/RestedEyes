@@ -47,14 +47,14 @@ namespace RestedEyes.Workers
             if (State == State.Work && (currentTimeSpan - _lastTimeSpan) > _workTime)
             {
                 _lastTimeSpan = currentTimeSpan;
-                _eventState.Invoke(this, State.ToRest);
                 State = State.Rest;
+                _eventState.Invoke(this, State.ToRest);
             }
             if (State == State.Rest && (currentTimeSpan - _lastTimeSpan) > _restTime)
             {
                 _lastTimeSpan = currentTimeSpan;
-                _eventState.Invoke(this, State.ToWork);
                 State = State.Work;
+                _eventState.Invoke(this, State.ToWork);
             }
 
         }
