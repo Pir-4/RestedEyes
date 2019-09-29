@@ -50,7 +50,10 @@
     <Compile Include="Autoloading.cs" />
     <Compile Include="Configs\Config.cs" />
     <Compile Include="Configs\ConfigManager.cs" />
-    <Compile Include="DetectProcess.cs" />
+    <Compile Include="DetectProcesses\DetectEvent.cs" />
+    <Compile Include="DetectProcesses\WinLogonDetect.cs" />
+    <Compile Include="DetectProcesses\IDetectProcess.cs" />
+    <Compile Include="DetectProcesses\IDetectProcessObserver.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

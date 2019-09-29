@@ -130,7 +130,7 @@ namespace RestedEyes
 
         public void attach(IModelObserver imo)
         {
-            eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
+            //eventCurrentTime += new ModelHandler<WachingTime>(imo.updateCurrentTime);
             eventEndWork += new ModelHandler<WachingTime>(imo.RaiseMessageAboutEndWork);
             eventStartWork += new ModelHandler<WachingTime>(imo.RaiseMessageAboutStartWork);
             eventTimeRest += new ModelHandler<WachingTime>(imo.UpdateRestTimeLabel);

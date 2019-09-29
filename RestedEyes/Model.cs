@@ -6,24 +6,28 @@ using System.Threading.Tasks;
 using RestedEyes.Timers;
 using RestedEyes.Configs;
 using RestedEyes.Workers;
+using RestedEyes.DetectProcesses;
 
 namespace RestedEyes
 {
-    public class Model : IModel, ITimeWorkerObserver, ITimerObserver
+    public class Model : IModel, ITimeWorkerObserver, ITimerObserver, IDetectProcessObserver
     {
         public delegate void ModelHandler<IModel>(IModel sender, ModelEvent e);
 
         readonly TickTimer _timer = new TickTimer();
+        readonly IDetectProcess _detectProcess = new WinLogonDetect();
+
         IEnumerable<Config> _configs;
         List<ITimeWorker> _workers;
         State _currentState = State.None;
         TimeSpan _saveTime;
 
         //***Event*********
-        public event ModelHandler<Model> eventEndWork;
-        public event ModelHandler<Model> eventStartWork;
-        public event ModelHandler<Model> eventUpdateRestTime;
-        public event ModelHandler<Model> eventUpdateWorkTime;
+        event ModelHandler<Model> eventEndWork;
+        event ModelHandler<Model> eventStartWork;
+        event ModelHandler<Model> eventUpdateRestTime;
+        event ModelHandler<Model> eventUpdateWorkTime;
+        event ModelHandler<Model> eventWinLogonInfo;
 
         public Model()
         {
@@ -31,7 +35,9 @@ namespace RestedEyes
            _workers = TimeWorker.Create(_configs).ToList();
             _workers.ForEach(item => item.Attach(this));
             _timer.Attach(_workers);
-            _timer.Attach(this);            
+            _timer.Attach(this);
+            _timer.Attach((ITimerObserver)_detectProcess);
+            _detectProcess.Attach(this);
         }
 
         public void attach(IModelObserver observer)
@@ -43,6 +49,8 @@ namespace RestedEyes
 
             eventUpdateRestTime += new ModelHandler<Model>(observer.UpdateRestTimeLabel);
             eventUpdateWorkTime += new ModelHandler<Model>(observer.UpdateWorkTimeLabel);
+
+            eventWinLogonInfo += new ModelHandler<Model>(observer.UpdateWinlogon);
         }
 
         public void eventBreak()
@@ -96,6 +104,11 @@ namespace RestedEyes
                 }
                 useEvent.Invoke(this, new ModelEvent(time, msg));
             }
+        }
+
+        public void UpdateWinlogon(WinLogonDetect detectProcess, DetectEvent e)
+        {
+            eventWinLogonInfo.Invoke(this, new ModelEvent(e.WinLogon ? 1 : 0, ""));
         }
     }
 }
