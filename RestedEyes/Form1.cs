@@ -190,13 +190,14 @@ namespace RestedEyes
             }            
         }*/
 
-        public void UpdateWinlogon(IModel wachingTime, ModelEvent e)
+        public void RaiseMessageAfterWinlogon(IModel wachingTime, ModelEvent e)
         {
             DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             if (DialogResult.Yes == result)
                 eventBreak(true);
-
+            else
+                eventBreak(false);
         }
     }
 }

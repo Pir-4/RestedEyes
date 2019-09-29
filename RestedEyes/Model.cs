@@ -53,7 +53,7 @@ namespace RestedEyes
             eventUpdateRestTime += new ModelHandler<Model>(observer.UpdateRestTimeLabel);
             eventUpdateWorkTime += new ModelHandler<Model>(observer.UpdateWorkTimeLabel);
 
-            eventWinLogonInfo += new ModelHandler<Model>(observer.UpdateWinlogon);
+            eventWinLogonInfo += new ModelHandler<Model>(observer.RaiseMessageAfterWinlogon);
         }
 
         public void eventBreak()
