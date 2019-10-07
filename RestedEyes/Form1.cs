@@ -38,7 +38,7 @@ namespace RestedEyes
             label2.Text = "Отдыха прошло 0 минут";
             label3.Text = "Работаете 0 минут";
             label5.Text = "";
-            button2.Text = "Отошел";
+            button2.Text = "Отдых";
 
         }
         private void button1_Click(object sender, EventArgs e)
@@ -152,18 +152,17 @@ namespace RestedEyes
 
         private void button2_Click(object sender, EventArgs e)
         {
-
             eventBreak(isBreak);
         }
 
-        private void eventBreak(bool flag)
+        private void eventBreak(bool isBreak)
         {
-            isBreak = !flag;
+            this.isBreak = !isBreak;
             if (isBreak)
-                button2.Text = "Подошел";
+                button2.Text = "Работать";
             else
-                button2.Text = "Отошел";
-            wachingTime.eventBreak();
+                button2.Text = "Отдых";
+            wachingTime.eventBreak(isBreak);
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
@@ -195,9 +194,9 @@ namespace RestedEyes
             DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             if (DialogResult.Yes == result)
-                eventBreak(true);
-            else
                 eventBreak(false);
+            else
+                eventBreak(true);
         }
     }
 }
