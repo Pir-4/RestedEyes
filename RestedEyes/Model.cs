@@ -86,13 +86,18 @@ namespace RestedEyes
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
-            if ( _currentWorker != null)
+            UpdateTimeCounterWorAndRest();
+        }
+
+        private void UpdateTimeCounterWorAndRest()
+        {
+            if (_currentWorker != null)
             {
                 var useEvent = _currentWorker.State == State.Work ? eventUpdateWorkTime : eventUpdateRestTime;
                 var currentTime = _timer.Now().TimeOfDay;
                 var dif = currentTime - _currentWorker.LastTimeSpan;
                 var msg = "секунд";
-                var time = dif.Seconds; 
+                var time = dif.Seconds;
                 if (dif.Minutes > 0)
                 {
                     msg = "минут";
