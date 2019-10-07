@@ -323,7 +323,7 @@ namespace RestedEyes
 
         }
 
-        public void eventBreak()
+        public void eventBreak(bool isBreak)
         {
             _flagIsBreak = !_flagIsBreak;
             if (_flagIsBreak)

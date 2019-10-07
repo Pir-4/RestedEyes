@@ -55,9 +55,9 @@ namespace RestedEyes
             eventWinLogonInfo += new ModelHandler<Model>(observer.RaiseMessageAfterWinlogon);
         }
 
-        public void eventBreak()
+        public void eventBreak(bool isBreak)
         {
-            throw new NotImplementedException();
+            _workers.ForEach(item => item.FreezeRest(isBreak));
         }
 
         public string eventStart()

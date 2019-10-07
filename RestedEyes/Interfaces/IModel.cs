@@ -9,7 +9,7 @@ namespace RestedEyes
     public interface IModel
     {
         void attach(IModelObserver imo);
-        void eventBreak();
+        void eventBreak(bool isBreak);
         string eventStart();
     }
 }
