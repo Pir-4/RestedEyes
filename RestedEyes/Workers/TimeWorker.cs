@@ -11,15 +11,15 @@ namespace RestedEyes.Workers
         private delegate void ModelHandler<ITimeWorker>(ITimeWorker worker, State state);
         private event ModelHandler<TimeWorker> _eventState;
 
-        private readonly TimeSpan _workTime;
-        private readonly TimeSpan _restTime;
+        public TimeSpan WorkTime { get; private set; }
+        public TimeSpan RestTime { get; private set; }
         public TimeSpan LastTimeSpan { get; private set; }
          
         private TimeWorker(Config config)
         {
             Config = config;
-            _workTime = ToTimeSpan(Config.Work);
-            _restTime = ToTimeSpan(Config.Rest);
+            WorkTime = ToTimeSpan(Config.Work);
+            RestTime = ToTimeSpan(Config.Rest);
         }
 
         public static ITimeWorker Create(Config config)
@@ -44,13 +44,13 @@ namespace RestedEyes.Workers
         public void Tick(TickTimer timer, DateTime dateTime)
         {
             var currentTimeSpan = dateTime.TimeOfDay;
-            if (State == State.Work && (currentTimeSpan - LastTimeSpan) > _workTime)
+            if (State == State.Work && (currentTimeSpan - LastTimeSpan) > WorkTime)
             {
                 LastTimeSpan = currentTimeSpan;
                 State = State.Rest;
                 _eventState.Invoke(this, State.ToRest);
             }
-            if (State == State.Rest && (currentTimeSpan - LastTimeSpan) > _restTime)
+            if (State == State.Rest && (currentTimeSpan - LastTimeSpan) > RestTime)
             {
                 LastTimeSpan = currentTimeSpan;
                 State = State.Work;
@@ -75,7 +75,7 @@ namespace RestedEyes.Workers
             if (!switchOn)
             {
                 var currentTimeSpan = DateTime.Now.TimeOfDay;
-                if ((currentTimeSpan - LastTimeSpan) > _restTime)
+                if ((currentTimeSpan - LastTimeSpan) > RestTime)
                 {
                     LastTimeSpan = DateTime.Now.TimeOfDay;
                     State = State.Work;

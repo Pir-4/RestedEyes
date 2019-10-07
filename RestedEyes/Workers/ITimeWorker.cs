@@ -14,6 +14,10 @@ namespace RestedEyes.Workers
         State State { get; set; }
         Config Config { get; }
         TimeSpan LastTimeSpan { get; }
+
+        TimeSpan WorkTime { get; }
+        TimeSpan RestTime { get; }
+
         void Start();
 
         void FreezeRest(bool isFreeze = true);
