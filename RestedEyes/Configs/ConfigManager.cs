@@ -46,31 +46,28 @@ namespace RestedEyes.Configs
                 new Config()
             {
                 message = "Сделайте гимнастику для глаз",
-                timeRest = 15,
-                timeRestSign = "m",
-                timeWork = 1,
-                timeWorkSign = "h"
+                Rest = new TimeInfo() { Number=15, Sign="m"},
+                Work = new TimeInfo() { Number=1, Sign="h"},
             },
             new Config() {
                 message = "Разомнитесь",
-                timeRest = 15,
-                timeRestSign = "m",
-                timeWork = 2,
-                timeWorkSign = "h"
+                Rest = new TimeInfo() { Number=15, Sign="m"},
+                Work = new TimeInfo() { Number=2, Sign="h"},
             },
              new Config() {
                 message = "Передохните",
-                timeRest = 2,
-                timeRestSign = "m",
-                timeWork = 30,
-                timeWorkSign = "m"
+                Rest = new TimeInfo() { Number=2, Sign="m"},
+                Work = new TimeInfo() { Number=30, Sign="m"},
              },
               new Config() {
                 message = "Передохните-test",
-                timeRest = 10,
-                timeRestSign = "s",
-                timeWork = 10,
-                timeWorkSign = "s"
+                Rest = new TimeInfo() { Number=10, Sign="s"},
+                Work = new TimeInfo() { Number=10, Sign="s" },
+             },
+              new Config() {
+                message = "Передохните-test2",
+                Rest = new TimeInfo() { Number=5, Sign="s"},
+                Work = new TimeInfo() { Number=5, Sign="s" },
              }
             };
         }

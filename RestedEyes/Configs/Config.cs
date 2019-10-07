@@ -12,13 +12,27 @@ namespace RestedEyes.Configs
     {
         [DataMember]
         internal string message;
-        [DataMember]
+        [DataMember(Name = "work")]
+        internal TimeInfo Work;
+        [DataMember(Name = "rest")]
+        internal TimeInfo Rest;
+
+        /*[DataMember]
         internal int timeWork;
         [DataMember]
         internal string timeWorkSign;
         [DataMember]
         internal int timeRest;
         [DataMember]
-        internal string timeRestSign;
+        internal string timeRestSign;*/
+    }
+
+    [DataContract]
+    public class TimeInfo
+    {
+        [DataMember]
+        internal int Number;
+        [DataMember]
+        internal string Sign;
     }
 }

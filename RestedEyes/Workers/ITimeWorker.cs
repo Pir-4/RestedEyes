@@ -13,6 +13,7 @@ namespace RestedEyes.Workers
         void Attach(ITimeWorkerObserver observer);
         State State { get; set; }
         Config Config { get; }
+        TimeSpan LastTimeSpan { get; }
         void Start();
     }
 }

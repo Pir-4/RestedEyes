@@ -13,13 +13,13 @@ namespace RestedEyes.Workers
 
         private readonly TimeSpan _workTime;
         private readonly TimeSpan _restTime;
-        private TimeSpan _lastTimeSpan;
+        public TimeSpan LastTimeSpan { get; private set; }
          
         private TimeWorker(Config config)
         {
             Config = config;
-            _workTime = ToTimeSpan(Config.timeWork, Config.timeWorkSign);
-            _restTime = ToTimeSpan(Config.timeRest, Config.timeRestSign);
+            _workTime = ToTimeSpan(Config.Work);
+            _restTime = ToTimeSpan(Config.Rest);
         }
 
         public static ITimeWorker Create(Config config)
@@ -44,15 +44,15 @@ namespace RestedEyes.Workers
         public void Tick(TickTimer timer, DateTime dateTime)
         {
             var currentTimeSpan = dateTime.TimeOfDay;
-            if (State == State.Work && (currentTimeSpan - _lastTimeSpan) > _workTime)
+            if (State == State.Work && (currentTimeSpan - LastTimeSpan) > _workTime)
             {
-                _lastTimeSpan = currentTimeSpan;
+                LastTimeSpan = currentTimeSpan;
                 State = State.Rest;
                 _eventState.Invoke(this, State.ToRest);
             }
-            if (State == State.Rest && (currentTimeSpan - _lastTimeSpan) > _restTime)
+            if (State == State.Rest && (currentTimeSpan - LastTimeSpan) > _restTime)
             {
-                _lastTimeSpan = currentTimeSpan;
+                LastTimeSpan = currentTimeSpan;
                 State = State.Work;
                 _eventState.Invoke(this, State.ToWork);
             }
@@ -61,18 +61,18 @@ namespace RestedEyes.Workers
 
         public void Start()
         {
-            _lastTimeSpan = DateTime.Now.TimeOfDay;
+            LastTimeSpan = DateTime.Now.TimeOfDay;
         }
 
-        private TimeSpan ToTimeSpan(int time, string signTime)
+        private TimeSpan ToTimeSpan(TimeInfo timeInfo)
         {
-            if (signTime.ToLower().Equals("s"))
-                return TimeSpan.FromSeconds(time);
-            else if (signTime.ToLower().Equals("m"))
-                return TimeSpan.FromMinutes(time);
-            else if (signTime.ToLower().Equals("h"))
-                return TimeSpan.FromHours(time);
-            throw new ArgumentException($"Error argument '{signTime}'");
+            if (timeInfo.Sign.ToLower().Equals("s"))
+                return TimeSpan.FromSeconds(timeInfo.Number);
+            else if (timeInfo.Sign.ToLower().Equals("m"))
+                return TimeSpan.FromMinutes(timeInfo.Number);
+            else if (timeInfo.Sign.ToLower().Equals("h"))
+                return TimeSpan.FromHours(timeInfo.Number);
+            throw new ArgumentException($"Error argument '{timeInfo.Sign}'");
         }
     }
 }

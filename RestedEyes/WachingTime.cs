@@ -163,8 +163,8 @@ namespace RestedEyes
             {
                 ItemTime tmp = new ItemTime();
                 tmp.setMessage(item.message);
-                tmp.setWork(item.timeWork, item.timeWorkSign);
-                tmp.setRest(item.timeRest, item.timeRestSign);
+               // tmp.setWork(item.timeWork, item.timeWorkSign);
+               // tmp.setRest(item.timeRest, item.timeRestSign);
                 _items.Add(tmp);
             }
         }
@@ -173,24 +173,24 @@ namespace RestedEyes
         {
             Config conf = new Config();
             conf.message = "Сделайте гимнастику для глаз";
-            conf.timeRest = 15;
-            conf.timeRestSign = "m";
-            conf.timeWork = 1;
-            conf.timeWorkSign = "h";
+            //conf.timeRest = 15;
+            //conf.timeRestSign = "m";
+            //conf.timeWork = 1;
+           // conf.timeWorkSign = "h";
 
             Config conf2 = new Config();
             conf2.message = "Разомнитесь";
-            conf2.timeRest = 15;
+            /*conf2.timeRest = 15;
             conf2.timeRestSign = "m";
             conf2.timeWork = 2;
-            conf2.timeWorkSign = "h";
+            conf2.timeWorkSign = "h";*/
 
             Config conf3 = new Config();
             conf3.message = "Передохните";
-            conf3.timeRest = 2;
+            /*conf3.timeRest = 2;
             conf3.timeRestSign = "m";
             conf3.timeWork = 30;
-            conf3.timeWorkSign = "m";
+            conf3.timeWorkSign = "m";*/
 
 
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Config[]));
