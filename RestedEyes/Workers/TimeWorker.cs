@@ -56,7 +56,6 @@ namespace RestedEyes.Workers
                 State = State.Work;
                 _eventState.Invoke(this, State.ToWork);
             }
-
         }
 
         public void Start()
@@ -69,9 +68,11 @@ namespace RestedEyes.Workers
             if (switchOn)
             {
                 State = State.FreezeRest;
-                LastTimeSpan = DateTime.Now.TimeOfDay;
+                if( State != State.Rest && State != State.FreezeRest) 
+                    LastTimeSpan = DateTime.Now.TimeOfDay;
             }
-            else
+
+            if (!switchOn)
             {
                 var currentTimeSpan = DateTime.Now.TimeOfDay;
                 if ((currentTimeSpan - LastTimeSpan) > _restTime)

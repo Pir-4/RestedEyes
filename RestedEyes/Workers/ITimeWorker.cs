@@ -16,6 +16,6 @@ namespace RestedEyes.Workers
         TimeSpan LastTimeSpan { get; }
         void Start();
 
-        void FreezeRest(bool swithOn = true);
+        void FreezeRest(bool isFreeze = true);
     }
 }
