@@ -35,11 +35,13 @@ namespace RestedEyes
         {
             _configs = ConfigManager.ConfigsDefault();
            _workers = TimeWorker.Create(_configs).ToList();
+
             _workers.ForEach(item => item.Attach(this));
+            _detectProcess.Attach(this);
+
             _timer.Attach(_workers);
             _timer.Attach(this);
             _timer.Attach((ITimerObserver)_detectProcess);
-            _detectProcess.Attach(this);
         }
 
         public void attach(IModelObserver observer)
@@ -70,17 +72,27 @@ namespace RestedEyes
 
         public void ChangeState(ITimeWorker worker, State state)
         {
+            int _;
             if (state == State.ToRest)
             {
-                eventEndWork.Invoke(this, new ModelEvent(worker.Config.Rest.Number, worker.Config.message));
+                eventEndWork.Invoke(this, new ModelEvent()
+                {
+                    Number  = worker.Config.Rest.Number,
+                    Msg = worker.Config.message,
+                    Sign = ConvertTimeToString(worker.RestTime, out _)
+                });
                 _currentWorker = worker;
-                _currentWorker.State = State.Rest;
-            }
+
+            } 
             else if (state == State.ToWork)
             {
-                eventStartWork.Invoke(this, new ModelEvent(worker.Config.Work.Number, worker.Config.message));
+                eventStartWork.Invoke(this, new ModelEvent()
+                {
+                    Number = worker.Config.Work.Number,
+                    Msg = worker.Config.message,
+                    Sign = ConvertTimeToString(worker.WorkTime, out _)
+                });
                 _currentWorker = worker;
-                _currentWorker.State = State.Work;
             }
         }
 
@@ -96,19 +108,13 @@ namespace RestedEyes
                 var useEvent = _currentWorker.State == State.Work ? eventUpdateWorkTime : eventUpdateRestTime;
                 var currentTime = _timer.Now().TimeOfDay;
                 var dif = currentTime - _currentWorker.LastTimeSpan;
-                var msg = "секунд";
                 var time = dif.Seconds;
-                if (dif.Minutes > 0)
+                var msg = ConvertTimeToString(dif, out time);                
+                useEvent.Invoke(this, new ModelEvent()
                 {
-                    msg = "минут";
-                    time = dif.Minutes;
-                }
-                if (dif.Hours > 0)
-                {
-                    msg = "часов";
-                    time = dif.Days;
-                }
-                useEvent.Invoke(this, new ModelEvent(time, msg));
+                    Number = time,
+                    Msg = msg
+                });
             }
         }
 
@@ -116,9 +122,31 @@ namespace RestedEyes
         {
             if (_isWinLogon && !e.WinLogon)//detect when winlogon window is hiding
             {
-                eventWinLogonInfo.Invoke(this, new ModelEvent(0, ""));
+                eventWinLogonInfo.Invoke(this, new ModelEvent()
+                {
+                    Number = 0,
+                    Msg = ""
+                });
             }
             _isWinLogon = e.WinLogon;
         }
+
+        private string ConvertTimeToString(TimeSpan timeSpan, out int time)
+        {
+            time = timeSpan.Seconds;
+            var msg = "секунд";
+            if (timeSpan.Minutes > 0)
+            {
+                msg = "минут";
+                time = timeSpan.Minutes;
+            }
+            if (timeSpan.Hours > 0)
+            {
+                msg = "часов";
+                time = timeSpan.Days;
+            }
+            return msg;
+        }
+
     }
 }

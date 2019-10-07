@@ -53,13 +53,6 @@ namespace RestedEyes
             }
         }
 
-        /*private void InitializeCurrentTimer()
-        {
-            _currentTimer.Interval = 1000;
-            //_currentTimer.Tick += new EventHandler(timer_Tick);
-            //_currentTimer.Start();
-        }*/
-
         private void InitializeButtonAutoloading()
         {
             if (Autoloading.isAutoloading(programmPaht))
@@ -68,16 +61,6 @@ namespace RestedEyes
                 button1.Text = "Автозапуск: Добавить";
         }
 
-        /* void timer_Tick(object sender, EventArgs e)
-         {
-            // detectProcess.CheckWinlogon();
-         }*/
-
-        /* public void updateCurrentTime(IModel wachingTime, ModelEvent e)
-         {
-             // TODO remove
-             //label1.Text = e.currentTime; 
-         }*/
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
@@ -101,9 +84,9 @@ namespace RestedEyes
             }
             else
             {
-                label5.Text = "Перерыв " + e.restTime.ToString() + " минут!";
+                label5.Text = "Перерыв " + e.Number.ToString() + $" {e.Sign}!";
                 if (!isMeeting)
-                    MessageBox.Show(e.restMsg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
+                    MessageBox.Show(e.Msg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
                         MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
         }
@@ -119,7 +102,7 @@ namespace RestedEyes
             {
                 label5.Text = "Пора работать!";
                 if (!isMeeting)
-                    MessageBox.Show("Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
+                    MessageBox.Show($"Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
                         MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
         }
@@ -133,7 +116,7 @@ namespace RestedEyes
             }
             else
             {
-                label2.Text = "Отдыха прошло " + e.restTime.ToString() + " " + e.restMsg;
+                label2.Text = "Отдыха прошло " + e.Number.ToString() + " " + e.Msg;
             }
         }
 
@@ -146,7 +129,7 @@ namespace RestedEyes
             }
             else
             {
-                label3.Text = "Работаете " + e.restTime.ToString() + " " + e.restMsg;
+                label3.Text = "Работаете " + e.Number.ToString() + " " + e.Msg;
             }
         }
 
@@ -168,26 +151,6 @@ namespace RestedEyes
         {
             isMeeting = checkBox1.Checked;
         }
-
-        /*public void UpdateWinlogon(DetectProcess detectProcess, DetectEvent e)
-        {
-            if (e.WinLogon && !isWinLogon)
-            {
-                isWinLogon = true;
-                if (!isBreak)
-                    eventBreak(isBreak);
-            }
-            else if(!e.WinLogon && isWinLogon)
-            {
-                isWinLogon = false;
-                if (isBreak)
-                {
-                    DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
-                    if (DialogResult.Yes == result)
-                        eventBreak(isBreak);
-                }
-            }            
-        }*/
 
         public void RaiseMessageAfterWinlogon(IModel wachingTime, ModelEvent e)
         {

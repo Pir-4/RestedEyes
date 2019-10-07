@@ -248,7 +248,7 @@ namespace RestedEyes
             }
             _flagIsRest = true;
             _currentItem.startRest();
-            eventEndWork.Invoke(this, new ModelEvent(_currentItem.rest.Minutes, _currentItem.mesg));
+          //  eventEndWork.Invoke(this, new ModelEvent(_currentItem.rest.Minutes, _currentItem.mesg));
 
         }
 
@@ -260,7 +260,7 @@ namespace RestedEyes
                 _currentItem.resetRest();
                 _flagIsRest = false;
                 _startAllWork();
-                eventStartWork.Invoke(this, new ModelEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
+               // eventStartWork.Invoke(this, new ModelEvent(_currentItem.worktime.Minutes, _currentItem.mesg));
             }
 
         }
@@ -291,7 +291,7 @@ namespace RestedEyes
             _currentTime = DateTime.Now;
             string curtime = _currentTime.Hour.ToString() + ":" + _currentTime.Minute.ToString() + ":" +
                              _currentTime.Second.ToString();
-            eventCurrentTime.Invoke(this, new ModelEvent(curtime));
+           // eventCurrentTime.Invoke(this, new ModelEvent(curtime));
         }
 
         public string eventStart()
@@ -385,10 +385,10 @@ namespace RestedEyes
                 value = time.Elapsed.Hours;
                 msg = "часов";
             }
-            if(restWork)
+            /*if(restWork)
                 eventTimeRest.Invoke(this, new ModelEvent(value, msg));
             else
-                eventTimeWork.Invoke(this, new ModelEvent(value, msg));
+                eventTimeWork.Invoke(this, new ModelEvent(value, msg));*/
         }
         
     }

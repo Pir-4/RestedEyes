@@ -10,19 +10,8 @@ namespace RestedEyes
     {
         public string currentTime;
 
-        public int restTime;
-        public string restMsg;
-
-
-        public ModelEvent(string currtime)
-        {
-            currentTime = currtime;
-        }
-
-        public ModelEvent(int rTime, string rMsg)
-        {
-            restTime = rTime;
-            restMsg = rMsg;
-        }
+        public int Number = 0;
+        public string Msg = "";
+        public string Sign = "";
     }
 }
