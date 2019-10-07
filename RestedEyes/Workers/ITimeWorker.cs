@@ -15,5 +15,7 @@ namespace RestedEyes.Workers
         Config Config { get; }
         TimeSpan LastTimeSpan { get; }
         void Start();
+
+        void FreezeRest(bool swithOn = true);
     }
 }

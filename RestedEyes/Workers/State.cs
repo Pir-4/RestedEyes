@@ -13,5 +13,6 @@ namespace RestedEyes.Workers
         ToRest,
         Work,
         Rest,
+        FreezeRest,
     }
 }

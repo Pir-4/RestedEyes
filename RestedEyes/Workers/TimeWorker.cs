@@ -64,6 +64,28 @@ namespace RestedEyes.Workers
             LastTimeSpan = DateTime.Now.TimeOfDay;
         }
 
+        public void FreezeRest(bool switchOn = true)
+        {
+            if (switchOn)
+            {
+                State = State.FreezeRest;
+                LastTimeSpan = DateTime.Now.TimeOfDay;
+            }
+            else
+            {
+                var currentTimeSpan = DateTime.Now.TimeOfDay;
+                if ((currentTimeSpan - LastTimeSpan) > _restTime)
+                {
+                    LastTimeSpan = DateTime.Now.TimeOfDay;
+                    State = State.Work;
+                }
+                else
+                {
+                    State = State.Rest;
+                }
+            }
+        }
+
         private TimeSpan ToTimeSpan(TimeInfo timeInfo)
         {
             if (timeInfo.Sign.ToLower().Equals("s"))
