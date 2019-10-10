@@ -128,6 +128,10 @@ namespace RestedEyes
                     Msg = ""
                 });
             }
+            else if (!_isWinLogon && e.WinLogon)
+            {
+                this.eventBreak(isBreak: true);
+            }
             _isWinLogon = e.WinLogon;
         }
 
