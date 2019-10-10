@@ -13,7 +13,7 @@ namespace RestedEyes.Workers
 
         public TimeSpan WorkTime { get; private set; }
         public TimeSpan RestTime { get; private set; }
-        public TimeSpan LastTimeSpan { get; private set; }
+        public TimeSpan ChangeStatusTime { get; private set; }
          
         private TimeWorker(Config config)
         {
@@ -44,15 +44,15 @@ namespace RestedEyes.Workers
         public void Tick(TickTimer timer, DateTime dateTime)
         {
             var currentTimeSpan = dateTime.TimeOfDay;
-            if (State == State.Work && (currentTimeSpan - LastTimeSpan) > WorkTime)
+            if (State == State.Work && (currentTimeSpan - ChangeStatusTime) > WorkTime)
             {
-                LastTimeSpan = currentTimeSpan;
+                ChangeStatusTime = currentTimeSpan;
                 State = State.Rest;
                 _eventState.Invoke(this, State.ToRest);
             }
-            if (State == State.Rest && (currentTimeSpan - LastTimeSpan) > RestTime)
+            if (State == State.Rest && (currentTimeSpan - ChangeStatusTime) > RestTime)
             {
-                LastTimeSpan = currentTimeSpan;
+                ChangeStatusTime = currentTimeSpan;
                 State = State.Work;
                 _eventState.Invoke(this, State.ToWork);
             }
@@ -60,7 +60,7 @@ namespace RestedEyes.Workers
 
         public void Start()
         {
-            LastTimeSpan = DateTime.Now.TimeOfDay;
+            ChangeStatusTime = DateTime.Now.TimeOfDay;
         }
 
         public void FreezeRest(bool switchOn = true)
@@ -69,15 +69,15 @@ namespace RestedEyes.Workers
             {
                 State = State.FreezeRest;
                 if( State != State.Rest && State != State.FreezeRest) 
-                    LastTimeSpan = DateTime.Now.TimeOfDay;
+                    ChangeStatusTime = DateTime.Now.TimeOfDay;
             }
 
             if (!switchOn)
             {
                 var currentTimeSpan = DateTime.Now.TimeOfDay;
-                if ((currentTimeSpan - LastTimeSpan) > RestTime)
+                if ((currentTimeSpan - ChangeStatusTime) > RestTime)
                 {
-                    LastTimeSpan = DateTime.Now.TimeOfDay;
+                    ChangeStatusTime = DateTime.Now.TimeOfDay;
                     State = State.Work;
                 }
                 else
@@ -87,6 +87,10 @@ namespace RestedEyes.Workers
             }
         }
 
+        public void ReduceChangeStatusTime(ITimeWorker otherWorker)
+        {
+            this.ChangeStatusTime -= otherWorker.ChangeStatusTime;
+        }
         private TimeSpan ToTimeSpan(TimeInfo timeInfo)
         {
             if (timeInfo.Sign.ToLower().Equals("s"))

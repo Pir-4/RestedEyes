@@ -13,13 +13,11 @@ namespace RestedEyes.Workers
         void Attach(ITimeWorkerObserver observer);
         State State { get; set; }
         Config Config { get; }
-        TimeSpan LastTimeSpan { get; }
-
+        TimeSpan ChangeStatusTime { get; }
         TimeSpan WorkTime { get; }
         TimeSpan RestTime { get; }
-
         void Start();
-
         void FreezeRest(bool isFreeze = true);
+        void ReduceChangeStatusTime(ITimeWorker otherWorker);
     }
 }
