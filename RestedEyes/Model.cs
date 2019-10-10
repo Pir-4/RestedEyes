@@ -40,8 +40,7 @@ namespace RestedEyes
             _detectProcess.Attach(this);
 
             _timer.Attach(_workers);
-            _timer.Attach(this);
-            _timer.Attach((ITimerObserver)_detectProcess);
+            _timer.Attach(this, (ITimerObserver)_detectProcess);
         }
 
         public void attach(IModelObserver observer)
@@ -66,24 +65,30 @@ namespace RestedEyes
         {
             _timer.Start();
             _workers.ForEach(item => { item.State = State.Work; item.Start(); });
-            _currentWorker = _workers.First();
+            var minValue = _workers.Min(item => item.RestTime);
+            _currentWorker = _workers.First(item => item.RestTime.Equals(minValue));
             return _timer.Now().ToString();
         }
 
         public void ChangeState(ITimeWorker worker, State state)
         {
             int _;
+            if (_currentWorker.State == State.Rest && _currentWorker.RestTime > worker.RestTime)
+                return;
+
             if (state == State.ToRest)
-            {
+            {                
+                if (_currentWorker.State == State.Rest && _currentWorker.RestTime < worker.RestTime)                
+                    worker.ReduceChangeStatusTime(_currentWorker);
+                
                 eventEndWork.Invoke(this, new ModelEvent()
                 {
-                    Number  = worker.Config.Rest.Number,
+                    Number = worker.Config.Rest.Number,
                     Msg = worker.Config.message,
                     Sign = ConvertTimeToString(worker.RestTime, out _)
                 });
                 _currentWorker = worker;
-
-            } 
+            }
             else if (state == State.ToWork)
             {
                 eventStartWork.Invoke(this, new ModelEvent()
@@ -107,7 +112,7 @@ namespace RestedEyes
             {
                 var useEvent = _currentWorker.State == State.Work ? eventUpdateWorkTime : eventUpdateRestTime;
                 var currentTime = _timer.Now().TimeOfDay;
-                var dif = currentTime - _currentWorker.LastTimeSpan;
+                var dif = currentTime - _currentWorker.ChangeStatusTime;
                 var time = dif.Seconds;
                 var msg = ConvertTimeToString(dif, out time);                
                 useEvent.Invoke(this, new ModelEvent()
