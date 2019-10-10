@@ -72,7 +72,6 @@
     <Compile Include="Timers\TickTimer.cs" />
     <Compile Include="Workers\ITimeWorker.cs" />
     <Compile Include="Workers\TimeWorker.cs" />
-    <Compile Include="WachingTime.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
