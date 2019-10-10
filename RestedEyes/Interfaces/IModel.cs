@@ -10,6 +10,8 @@ namespace RestedEyes
     {
         void attach(IModelObserver imo);
         void eventBreak(bool isBreak);
-        string eventStart();
+        string EventStart();
+        void SaveConfig(string filePath);
+        void OpenConfig(string filePath);
     }
 }

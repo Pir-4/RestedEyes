@@ -34,15 +34,25 @@ namespace RestedEyes
         public Model()
         {
             _configs = ConfigManager.ConfigsDefault();
-           _workers = TimeWorker.Create(_configs).ToList();
+            InitWorkers(_configs);
+           /*_workers = TimeWorker.Create(_configs).ToList();
 
             _workers.ForEach(item => item.Attach(this));
-            _detectProcess.Attach(this);
+            _timer.Attach(_workers);*/
 
-            _timer.Attach(_workers);
+            _detectProcess.Attach(this);
             _timer.Attach(this, (ITimerObserver)_detectProcess);
         }
 
+        private void InitWorkers(IEnumerable<Config> configs)
+        {
+            if (_workers != null)
+                _timer.Deattach(_workers);
+
+           _workers = TimeWorker.Create(configs).ToList();
+            _workers.ForEach(item => item.Attach(this));
+            _timer.Attach(_workers);
+        }
         public void attach(IModelObserver observer)
         {
             _timer.Attach(observer);
@@ -61,13 +71,18 @@ namespace RestedEyes
             _workers.ForEach(item => item.FreezeRest(isBreak));
         }
 
-        public string eventStart()
+        public string EventStart()
         {
             _timer.Start();
+            Restart();
+            return _timer.Now().ToString();
+        }
+
+        private void Restart()
+        {
             _workers.ForEach(item => { item.State = State.Work; item.Start(); });
             var minValue = _workers.Min(item => item.RestTime);
             _currentWorker = _workers.First(item => item.RestTime.Equals(minValue));
-            return _timer.Now().ToString();
         }
 
         public void ChangeState(ITimeWorker worker, State state)
@@ -157,5 +172,16 @@ namespace RestedEyes
             return msg;
         }
 
+        public void SaveConfig(string filePath)
+        {
+            ConfigManager.Write(filePath, _configs.ToArray());
+        }
+
+        public void OpenConfig(string filePath)
+        {
+            _configs = ConfigManager.Read(filePath);
+            InitWorkers(_configs);
+            Restart();
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace RestedEyes
         private bool isBreak = false;
         private string programmPaht = Application.ExecutablePath;
         private bool isMeeting = false;
-        private bool isWinLogon = false;
+       // private bool isWinLogon = false;
 
 
 
@@ -34,7 +34,7 @@ namespace RestedEyes
             //detectProcess.Attach((IDetectProcessObserver)this);
             //InitializeCurrentTimer();
 
-            label4.Text = wachingTime.eventStart();
+            label4.Text = wachingTime.EventStart();
             label2.Text = "Отдыха прошло 0 минут";
             label3.Text = "Работаете 0 минут";
             label5.Text = "";
@@ -160,6 +160,39 @@ namespace RestedEyes
                 eventBreak(false);
             else
                 eventBreak(true);
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new SaveFileDialog())
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(programmPaht);
+                openFileDialog.Filter = "json files (*.json)|*.json";
+                openFileDialog.RestoreDirectory = true;
+                isMeeting = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    wachingTime.SaveConfig(openFileDialog.FileName); 
+                }
+                isMeeting = false;
+            }
+
+        }
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(programmPaht);
+                openFileDialog.Filter = "json files (*.json)|*.json";
+                openFileDialog.RestoreDirectory = true;
+                isMeeting = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    wachingTime.OpenConfig(openFileDialog.FileName);
+                }
+                isMeeting = false;
+            }
         }
     }
 }
