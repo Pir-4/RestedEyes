@@ -18,7 +18,7 @@ namespace RestedEyes
 
         bool IsAutoloading { get; }
         void AddOrRemoveAutoloading();
-
         string[] AutoloadTypes();
+        void ChangeAutoloadTypes(string typeName);
     }
 }
