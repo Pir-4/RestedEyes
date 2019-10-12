@@ -7,21 +7,16 @@ using System.Threading;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form, IModelObserver//, IDetectProcessObserver
+    public partial class Form1 : Form, IModelObserver
     {
         private delegate void TickSafeCallDelegate(TickTimer timer, DateTime dateTime);
         private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
 
-        // private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
-        IModel wachingTime = new Model();
-        //IDetectProcess detectProcess = new DetectProcess();
+        IModel _model = new Model();
 
         private bool isBreak = false;
         private string programmPaht = Application.ExecutablePath;
         private bool isMeeting = false;
-       // private bool isWinLogon = false;
-
-
 
         public Form1()
         {
@@ -30,17 +25,16 @@ namespace RestedEyes
             this.MaximumSize = this.Size;
             this.MinimumSize = this.Size;
             InitializeButtonAutoloading();
-            wachingTime.attach((IModelObserver)this);
-            //detectProcess.Attach((IDetectProcessObserver)this);
-            //InitializeCurrentTimer();
+            _model.attach((IModelObserver)this);
 
-            label4.Text = wachingTime.EventStart();
+            label4.Text = _model.EventStart();
             label2.Text = "Отдыха прошло 0 минут";
             label3.Text = "Работаете 0 минут";
             label5.Text = "";
             button2.Text = "Отдых";
 
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (Autoloading.AutoloadingProgramm(programmPaht))
@@ -60,7 +54,6 @@ namespace RestedEyes
             else
                 button1.Text = "Автозапуск: Добавить";
         }
-
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
@@ -145,8 +138,9 @@ namespace RestedEyes
                 button2.Text = "Работать";
             else
                 button2.Text = "Отдых";
-            wachingTime.eventBreak(isBreak);
+            _model.eventBreak(isBreak);
         }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMeeting = checkBox1.Checked;
@@ -172,11 +166,10 @@ namespace RestedEyes
                 isMeeting = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    wachingTime.SaveConfig(openFileDialog.FileName); 
+                    _model.SaveConfig(openFileDialog.FileName); 
                 }
                 isMeeting = false;
             }
-
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -189,7 +182,7 @@ namespace RestedEyes
                 isMeeting = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    wachingTime.OpenConfig(openFileDialog.FileName);
+                    _model.OpenConfig(openFileDialog.FileName);
                 }
                 isMeeting = false;
             }

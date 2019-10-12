@@ -33,26 +33,21 @@ namespace RestedEyes
 
         public Model()
         {
-            _configs = ConfigManager.ConfigsDefault();
-            InitWorkers(_configs);
-           /*_workers = TimeWorker.Create(_configs).ToList();
-
-            _workers.ForEach(item => item.Attach(this));
-            _timer.Attach(_workers);*/
-
+            InitWorkers(ConfigManager.ConfigsDefault());
             _detectProcess.Attach(this);
             _timer.Attach(this, (ITimerObserver)_detectProcess);
         }
 
         private void InitWorkers(IEnumerable<Config> configs)
         {
-            if (_workers != null)
+            if (_workers != null && _workers.Any())
                 _timer.Deattach(_workers);
 
-           _workers = TimeWorker.Create(configs).ToList();
+            _workers = TimeWorker.Create(configs).ToList();
             _workers.ForEach(item => item.Attach(this));
             _timer.Attach(_workers);
         }
+
         public void attach(IModelObserver observer)
         {
             _timer.Attach(observer);
