@@ -23,30 +23,32 @@ namespace RestedEyes.Autoloadings
             }
         }
 
-        public override bool IsAutoloading(string programmPath)
+        protected override bool IsAutoloading()
         {
-            return System.IO.File.Exists(PathToLink(programmPath));
+            return System.IO.File.Exists(PathToLink);
         }
 
-        protected override void Add(string programmPath)
+        protected override void Add()
         {
             WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(PathToLink(programmPath));
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(PathToLink);
             shortcut.Description = $"{_programmName} shortcut"; 
             shortcut.TargetPath = _programmPath;
             shortcut.Save();
         }
 
-        protected override void Remove(string programmPath)
+        protected override void Remove()
         {
-            System.IO.File.Delete(PathToLink(programmPath));
+            System.IO.File.Delete(PathToLink);
         }
 
-        private string PathToLink(string programmPath)
+        private string PathToLink
         {
-            this.InitProgrammPathAndName(programmPath);
-            var t = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            return Path.Combine(t, StartUpPath, _programmName + ".lnk");
+            get
+            {
+                var t = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                return Path.Combine(t, StartUpPath, _programmName + ".lnk");
+            }
         }
     }
 }

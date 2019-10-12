@@ -32,22 +32,19 @@ namespace RestedEyes.Autoloadings
             _keyName = UserRoot + "\\" + SubKey;
         }
 
-        protected override void Add(string programmPath)
+        protected override void Add()
         {
-            InitProgrammPathAndName(programmPath);
             _programmPath = addQuotes(_programmPath);
             Registry.SetValue(_keyName, _programmName, _programmPath, RegistryValueKind.String);
         }
 
-        protected override void Remove(string programmPath)
+        protected override void Remove()
         {
-            InitProgrammPathAndName(programmPath);
             Registry.SetValue(_keyName, _programmName, "", RegistryValueKind.String);
         }
 
-        public override bool IsAutoloading(string programmPath)
+        protected override bool IsAutoloading()
         {
-            InitProgrammPathAndName(programmPath);
             var flag = Registry.GetValue(_keyName, _programmName, "");
             if (!removeQuotes(flag.ToString()).Equals(_programmPath))
                 return false;

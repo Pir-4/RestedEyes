@@ -22,16 +22,24 @@ namespace RestedEyes.Autoloadings
             _programmName = Path.GetFileNameWithoutExtension(programmPath);
         }
 
-        protected abstract void Add(string programmPath);
-        protected abstract void Remove(string programmPath);
+        protected abstract void Add();
+        protected abstract void Remove();
 
-        public abstract bool IsAutoloading(string programmPath);
+        protected abstract bool IsAutoloading();
+
+        public virtual bool IsAutoloading(string programmPath)
+        {
+            InitProgrammPathAndName(programmPath);
+            return IsAutoloading();
+        }
+
         public void AutoloadingProgramm(string programmPath)
         {
+            InitProgrammPathAndName(programmPath);
             if (IsAutoloading(programmPath))
-                Remove(programmPath);
+                Remove();
             else
-                Add(programmPath);
+                Add();
         }
 
         public static string ExecutablePath
