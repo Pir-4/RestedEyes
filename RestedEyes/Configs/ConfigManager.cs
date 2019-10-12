@@ -42,7 +42,7 @@ namespace RestedEyes.Configs
                 new Config()
             {
                 message = "Сделайте гимнастику для глаз",
-                Rest = new TimeInfo() { Number=15, Sign="m"},
+                Rest = new TimeInfo() { Number=5, Sign="m"},
                 Work = new TimeInfo() { Number=1, Sign="h"},
             },
             new Config() {
@@ -53,18 +53,8 @@ namespace RestedEyes.Configs
              new Config() {
                 message = "Передохните",
                 Rest = new TimeInfo() { Number=2, Sign="m"},
-                Work = new TimeInfo() { Number=30, Sign="m"},
-             },
-             /* new Config() {
-                message = "Передохните-test",
-                Rest = new TimeInfo() { Number=10, Sign="s"},
-                Work = new TimeInfo() { Number=10, Sign="s" },
-             },
-              new Config() {
-                message = "Передохните-test2",
-                Rest = new TimeInfo() { Number=5, Sign="s"},
-                Work = new TimeInfo() { Number=5, Sign="s" },
-             }*/
+                Work = new TimeInfo() { Number=45, Sign="m"},
+             },              
             };
         }
 
