@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace RestedEyes.Autoloadings
 {
@@ -45,6 +46,7 @@ namespace RestedEyes.Autoloadings
                 value = value.Substring(0, value.Length - 1);
             return value;
         }
+
         public static bool isAutoloading(string programmPath)
         {
             _programmPath = programmPath;
@@ -55,18 +57,17 @@ namespace RestedEyes.Autoloadings
             return true;
         }
 
-        public static bool AutoloadingProgramm(string programmPath)
+        public static void AutoloadingProgramm(string programmPath)
         {
-            bool flag = isAutoloading(programmPath);
-            if (flag)
-            {
+            if (isAutoloading(programmPath))
                 removeAutoloadingProgramm();
-            }
             else
-            {
                 addAutoloadingProgramm();
-            }
-            return !flag;
+        }
+
+        public static string ExecutablePath
+        {
+            get { return Assembly.GetEntryAssembly().Location; }
         }
     }
 }

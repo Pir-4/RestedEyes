@@ -7,6 +7,7 @@ using RestedEyes.Timers;
 using RestedEyes.Configs;
 using RestedEyes.Workers;
 using RestedEyes.DetectProcesses;
+using RestedEyes.Autoloadings;
 
 namespace RestedEyes
 {
@@ -50,7 +51,7 @@ namespace RestedEyes
             _timer.Attach(_workers);
         }
 
-        public void attach(IModelObserver observer)
+        public void Attach(IModelObserver observer)
         {
             _timer.Attach(observer);
 
@@ -65,12 +66,12 @@ namespace RestedEyes
             eventRaiseError += new ModelHandler<Model>(observer.RaiseError);
         }
 
-        public void eventBreak(bool isBreak)
+        public void Break(bool isBreak)
         {
             _workers.ForEach(item => item.FreezeRest(isBreak));
         }
 
-        public string EventStart()
+        public string Start()
         {
             _timer.Start();
             Restart();
@@ -149,7 +150,7 @@ namespace RestedEyes
             }
             else if (!_isWinLogon && e.WinLogon)
             {
-                this.eventBreak(isBreak: true);
+                this.Break(isBreak: true);
             }
             _isWinLogon = e.WinLogon;
         }
@@ -190,5 +191,16 @@ namespace RestedEyes
                 eventRaiseError.Invoke(this, new ModelEvent() { Msg = e.Message });
             }
         }
+
+        public bool IsAutoloading
+        {
+           get { return Autoloading.isAutoloading(Autoloading.ExecutablePath); }
+        }
+
+        public void AddOrRemoveAutoloading()
+        {
+            Autoloading.AutoloadingProgramm(Autoloading.ExecutablePath);
+        }
+        
     }
 }

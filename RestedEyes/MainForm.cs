@@ -26,9 +26,9 @@ namespace RestedEyes
             this.MaximumSize = this.Size;
             this.MinimumSize = this.Size;
             InitializeButtonAutoloading();
-            _model.attach((IModelObserver)this);
+            _model.Attach((IModelObserver)this);
 
-            label4.Text = _model.EventStart();
+            label4.Text = _model.Start();
             label2.Text = "Отдыха прошло 0 минут";
             label3.Text = "Работаете 0 минут";
             label5.Text = "";
@@ -38,7 +38,8 @@ namespace RestedEyes
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Autoloading.AutoloadingProgramm(_programmPaht))
+            _model.AddOrRemoveAutoloading();
+            if (_model.IsAutoloading)
             {
                 button1.Text = "Автозапуск: Убрать";
             }
@@ -50,7 +51,7 @@ namespace RestedEyes
 
         private void InitializeButtonAutoloading()
         {
-            if (Autoloading.isAutoloading(_programmPaht))
+            if (_model.IsAutoloading)
                 button1.Text = "Автозапуск: Убрать";
             else
                 button1.Text = "Автозапуск: Добавить";
@@ -146,7 +147,7 @@ namespace RestedEyes
                 button2.Text = "Работать";
             else
                 button2.Text = "Отдых";
-            _model.eventBreak(isBreak);
+            _model.Break(isBreak);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
