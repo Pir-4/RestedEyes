@@ -15,7 +15,7 @@ namespace RestedEyes
         IModel _model = new Model();
 
         private bool isBreak = false;
-        private string programmPaht = Application.ExecutablePath;
+        private readonly string _programmPaht = Application.ExecutablePath;
         private bool isMeeting = false;
 
         public MainForm()
@@ -37,7 +37,7 @@ namespace RestedEyes
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Autoloading.AutoloadingProgramm(programmPaht))
+            if (Autoloading.AutoloadingProgramm(_programmPaht))
             {
                 button1.Text = "Автозапуск: Убрать";
             }
@@ -49,7 +49,7 @@ namespace RestedEyes
 
         private void InitializeButtonAutoloading()
         {
-            if (Autoloading.isAutoloading(programmPaht))
+            if (Autoloading.isAutoloading(_programmPaht))
                 button1.Text = "Автозапуск: Убрать";
             else
                 button1.Text = "Автозапуск: Добавить";
@@ -167,7 +167,7 @@ namespace RestedEyes
         {
             using (var openFileDialog = new SaveFileDialog())
             {
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(programmPaht);
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
                 openFileDialog.Filter = "json files (*.json)|*.json";
                 openFileDialog.RestoreDirectory = true;
                 isMeeting = true;
@@ -183,7 +183,7 @@ namespace RestedEyes
         {
             using (var openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(programmPaht);
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
                 openFileDialog.Filter = "json files (*.json)|*.json";
                 openFileDialog.RestoreDirectory = true;
                 isMeeting = true;
@@ -195,9 +195,14 @@ namespace RestedEyes
             }
         }
 
-        private void SaveToolStripMenuItem2_Click(object sender, EventArgs e)
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _model.SaveConfig();
+        }
+
+        private void AutoloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
