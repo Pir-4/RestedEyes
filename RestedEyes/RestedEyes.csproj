@@ -48,6 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Autoloadings\Autoloading.cs" />
+    <Compile Include="Autoloadings\IAutoloading.cs" />
+    <Compile Include="Autoloadings\RegistryAutoloading.cs" />
+    <Compile Include="Autoloadings\Types.cs" />
     <Compile Include="Configs\Config.cs" />
     <Compile Include="Configs\ConfigManager.cs" />
     <Compile Include="DetectProcesses\DetectEvent.cs" />
