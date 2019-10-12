@@ -10,32 +10,28 @@ namespace RestedEyes.Configs
 {
     public class ConfigManager
     {
-        readonly DataContractJsonSerializer _serializer;
-
-        public ConfigManager()
-        {
-            _serializer = new DataContractJsonSerializer(typeof(IEnumerable<Config>));
-        }
-
-        public bool Exist(string path = null)
+        public static bool Exist(string path = null)
         {
             if (string.IsNullOrWhiteSpace(path))
-                path = ConfigManager.PathConfigDefault();
+                path = ConfigManager.PathDefault;
             return File.Exists(path);
         }
 
-        public IEnumerable<Config> Raad(string path)
+        public static IEnumerable<Config> Read(string path)
         {
             using (var stream = File.Open(path, FileMode.Open))
             {
+                var _serializer = new DataContractJsonSerializer(typeof(IEnumerable<Config>));
                 return (IEnumerable<Config>)_serializer.ReadObject(stream);
             }
         }
 
-        public void Write(string path, Config[] configs)
+        public static void Write(string path, Config[] configs)
         {
+
             using (var stream = File.Create(path))
             {
+                var _serializer = new DataContractJsonSerializer(typeof(IEnumerable<Config>));
                 _serializer.WriteObject(stream, configs);
             }
         }
@@ -59,7 +55,7 @@ namespace RestedEyes.Configs
                 Rest = new TimeInfo() { Number=2, Sign="m"},
                 Work = new TimeInfo() { Number=30, Sign="m"},
              },
-              new Config() {
+             /* new Config() {
                 message = "Передохните-test",
                 Rest = new TimeInfo() { Number=10, Sign="s"},
                 Work = new TimeInfo() { Number=10, Sign="s" },
@@ -68,11 +64,13 @@ namespace RestedEyes.Configs
                 message = "Передохните-test2",
                 Rest = new TimeInfo() { Number=5, Sign="s"},
                 Work = new TimeInfo() { Number=5, Sign="s" },
-             }
+             }*/
             };
         }
 
-        public static string PathConfigDefault() => 
-            Path.Combine(Directory.GetCurrentDirectory(), "ConfigTime.json");
+        public static string PathDefault
+        {  
+            get { return Path.Combine(Directory.GetCurrentDirectory(), "ConfigTime.json"); }
+        }
     }
 }

@@ -27,14 +27,29 @@ namespace RestedEyes.Timers
             _eventTick += new ModelHandler<TickTimer>(observer.Tick);       
         }
 
+        public void Deattach(ITimerObserver observer)
+        {
+            _eventTick -= new ModelHandler<TickTimer>(observer.Tick);
+        }
+
         public void Attach(IEnumerable<ITimerObserver> observers)
         {
             observers.ToList().ForEach(item => this.Attach(item));
         }
 
+        public void Deattach(IEnumerable<ITimerObserver> observers)
+        {
+            observers.ToList().ForEach(item => this.Deattach(item));
+        }
+
         public void Attach(params ITimerObserver[] observers)
         {
             observers.ToList().ForEach(item => this.Attach(item));
+        }
+
+        public void Deattach(params ITimerObserver[] observers)
+        {
+            observers.ToList().ForEach(item => this.Deattach(item));
         }
 
         public void Detach(ITimerObserver observer)

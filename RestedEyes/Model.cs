@@ -30,17 +30,24 @@ namespace RestedEyes
         event ModelHandler<Model> eventUpdateRestTime;
         event ModelHandler<Model> eventUpdateWorkTime;
         event ModelHandler<Model> eventWinLogonInfo;
+        event ModelHandler<Model> eventRaiseError;
 
         public Model()
         {
-            _configs = ConfigManager.ConfigsDefault();
-           _workers = TimeWorker.Create(_configs).ToList();
-
-            _workers.ForEach(item => item.Attach(this));
+            InitWorkers(ConfigManager.ConfigsDefault());
             _detectProcess.Attach(this);
-
-            _timer.Attach(_workers);
             _timer.Attach(this, (ITimerObserver)_detectProcess);
+        }
+
+        private void InitWorkers(IEnumerable<Config> configs)
+        {
+            if (_workers != null && _workers.Any())
+                _timer.Deattach(_workers);
+
+            _configs = configs;
+            _workers = TimeWorker.Create(configs).ToList();
+            _workers.ForEach(item => item.Attach(this));
+            _timer.Attach(_workers);
         }
 
         public void attach(IModelObserver observer)
@@ -54,6 +61,8 @@ namespace RestedEyes
             eventUpdateWorkTime += new ModelHandler<Model>(observer.UpdateWorkTimeLabel);
 
             eventWinLogonInfo += new ModelHandler<Model>(observer.RaiseMessageAfterWinlogon);
+
+            eventRaiseError += new ModelHandler<Model>(observer.RaiseError);
         }
 
         public void eventBreak(bool isBreak)
@@ -61,13 +70,18 @@ namespace RestedEyes
             _workers.ForEach(item => item.FreezeRest(isBreak));
         }
 
-        public string eventStart()
+        public string EventStart()
         {
             _timer.Start();
+            Restart();
+            return _timer.Now().ToString();
+        }
+
+        private void Restart()
+        {
             _workers.ForEach(item => { item.State = State.Work; item.Start(); });
             var minValue = _workers.Min(item => item.RestTime);
             _currentWorker = _workers.First(item => item.RestTime.Equals(minValue));
-            return _timer.Now().ToString();
         }
 
         public void ChangeState(ITimeWorker worker, State state)
@@ -157,5 +171,24 @@ namespace RestedEyes
             return msg;
         }
 
+        public void SaveConfig(string filePath = null)
+        {
+            filePath = string.IsNullOrWhiteSpace(filePath) ? ConfigManager.PathDefault : filePath;
+            ConfigManager.Write(filePath, _configs.ToArray());
+        }
+
+        public void OpenConfig(string filePath)
+        {
+            try
+            {
+                _configs = ConfigManager.Read(filePath);
+                InitWorkers(_configs);
+                Restart();
+            }
+            catch (Exception e)
+            {
+                eventRaiseError.Invoke(this, new ModelEvent() { Msg = e.Message });
+            }
+        }
     }
 }
