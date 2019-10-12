@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Autoloading.cs" />
+    <Compile Include="Autoloadings\Autoloading.cs" />
     <Compile Include="Configs\Config.cs" />
     <Compile Include="Configs\ConfigManager.cs" />
     <Compile Include="DetectProcesses\DetectEvent.cs" />

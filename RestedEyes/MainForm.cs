@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using RestedEyes.Timers;
+using RestedEyes.Autoloadings;
 using System.IO;
 using System.Threading;
 
