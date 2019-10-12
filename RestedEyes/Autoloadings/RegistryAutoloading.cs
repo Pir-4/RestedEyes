@@ -11,9 +11,11 @@ namespace RestedEyes.Autoloadings
     public class RegistryAutoloading : Autoloading
     {
         private static RegistryAutoloading _instance;
-        readonly string _userRoot = "HKEY_CURRENT_USER";
-        string _subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-        string _keyName;
+
+        const string UserRoot = "HKEY_CURRENT_USER";
+        const string SubKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+
+        private string _keyName;
         string _programmPath = "";
         string _programmName = "";
 
@@ -26,9 +28,10 @@ namespace RestedEyes.Autoloadings
                 return _instance;
             }
         }
+
         private RegistryAutoloading()
         {
-            string _keyName = _userRoot + "\\" + _subKey;
+            _keyName = UserRoot + "\\" + SubKey;
         }
 
         protected override void Add(string programmPath)

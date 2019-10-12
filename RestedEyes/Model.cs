@@ -17,6 +17,7 @@ namespace RestedEyes
 
         readonly TickTimer _timer = new TickTimer();
         readonly IDetectProcess _detectProcess = new WinLogonDetect();
+        IAutoloading _autoload;
 
         IEnumerable<Config> _configs;
         List<ITimeWorker> _workers;
@@ -35,6 +36,7 @@ namespace RestedEyes
 
         public Model()
         {
+            _autoload = Autoloading.Instance(Types.Registry);
             InitWorkers(ConfigManager.ConfigsDefault());
             _detectProcess.Attach(this);
             _timer.Attach(this, (ITimerObserver)_detectProcess);
@@ -194,12 +196,12 @@ namespace RestedEyes
 
         public bool IsAutoloading
         {
-           get { return Autoloading.isAutoloading(Autoloading.ExecutablePath); }
+           get { return _autoload.IsAutoloading(Autoloading.ExecutablePath); }
         }
 
         public void AddOrRemoveAutoloading()
         {
-            Autoloading.AutoloadingProgramm(Autoloading.ExecutablePath);
+            _autoload.AutoloadingProgramm(Autoloading.ExecutablePath);
         }
         
     }

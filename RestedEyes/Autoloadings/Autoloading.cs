@@ -11,63 +11,32 @@ using System.Reflection;
 
 namespace RestedEyes.Autoloadings
 {
-    public class Autoloading
+    public abstract class Autoloading : IAutoloading
     {
-        static string _userRoot = "HKEY_CURRENT_USER";
-        static string _subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-        static string _keyName = _userRoot + "\\" + _subKey;
-        static string _programmPath = "";
-        static string _programmName = "RestedEyes";
+        protected abstract void Add(string programmPath);
+        protected abstract void Remove(string programmPath);
 
-
-        private static void addAutoloadingProgramm()
+        public abstract bool IsAutoloading(string programmPath);
+        public void AutoloadingProgramm(string programmPath)
         {
-            _programmPath = addQuotes(_programmPath);
-            Registry.SetValue(_keyName, _programmName, _programmPath, RegistryValueKind.String);
-        }
-        private static void removeAutoloadingProgramm()
-        {
-            Registry.SetValue(_keyName, _programmName, "", RegistryValueKind.String);
-        }
-
-        private static string addQuotes(string value)
-        {
-            if (!value.StartsWith("\""))
-                value = "\"" + value;
-            if (!value.EndsWith("\""))
-                value = value + "\"";
-            return value;
-        }
-        private static string removeQuotes(string value)
-        {
-            if (value.StartsWith("\""))
-                value = value.Substring(1);
-            if (value.EndsWith("\""))
-                value = value.Substring(0, value.Length - 1);
-            return value;
-        }
-
-        public static bool isAutoloading(string programmPath)
-        {
-            _programmPath = programmPath;
-            var flag = Registry.GetValue(_keyName, _programmName, "");
-            if (!removeQuotes(flag.ToString()).Equals(_programmPath))
-                return false;
-
-            return true;
-        }
-
-        public static void AutoloadingProgramm(string programmPath)
-        {
-            if (isAutoloading(programmPath))
-                removeAutoloadingProgramm();
+            if (IsAutoloading(programmPath))
+                Remove(programmPath);
             else
-                addAutoloadingProgramm();
+                Add(programmPath);
         }
 
         public static string ExecutablePath
         {
             get { return Assembly.GetEntryAssembly().Location; }
+        }
+
+        public static IAutoloading Instance(Types type)
+        {
+            switch(type)
+            {
+                case Types.Registry:  return RegistryAutoloading.InstanceObj;
+                default: throw new ArgumentException($"Argumetn {type.ToString()} not implemented");
+            }
         }
     }
 }
