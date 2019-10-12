@@ -15,9 +15,7 @@ namespace RestedEyes.Autoloadings
         const string UserRoot = "HKEY_CURRENT_USER";
         const string SubKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 
-        private string _keyName;
-        string _programmPath = "";
-        string _programmName = "";
+        private string _keyName;        
 
         public static IAutoloading InstanceObj
         {
@@ -73,12 +71,6 @@ namespace RestedEyes.Autoloadings
             if (value.EndsWith("\""))
                 value = value.Substring(0, value.Length - 1);
             return value;
-        }
-
-        private void InitProgrammPathAndName(string programmPath)
-        {
-            _programmPath = programmPath;
-            _programmName = Path.GetFileNameWithoutExtension(programmPath);
-        }
+        }        
     }
 }

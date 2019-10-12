@@ -213,10 +213,9 @@ namespace RestedEyes
         {
             if (string.IsNullOrWhiteSpace(typeName))
                 return;
-            var types = Enum.Parse(typeof(Types), typeName);
-            _autoload = Autoloading.Instance(Types.Registry);
+            var types = (Types)Enum.Parse(typeof(Types), typeName);
+            _autoload = Autoloading.Instance(types);
 
         }
-
     }
 }
