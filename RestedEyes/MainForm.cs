@@ -25,7 +25,7 @@ namespace RestedEyes
             this.MaximizeBox = false;
             this.MaximumSize = this.Size;
             this.MinimumSize = this.Size;
-            InitializeButtonAutoloading();
+            UpdateAutoloadingText();
             _model.Attach((IModelObserver)this);
 
             label4.Text = _model.Start();
@@ -39,22 +39,21 @@ namespace RestedEyes
         private void button1_Click(object sender, EventArgs e)
         {
             _model.AddOrRemoveAutoloading();
-            if (_model.IsAutoloading)
-            {
-                button1.Text = "Автозапуск: Убрать";
-            }
-            else
-            {
-                button1.Text = "Автозапуск: Добавить";
-            }
+            UpdateAutoloadingText();
         }
 
-        private void InitializeButtonAutoloading()
+        private void UpdateAutoloadingText()
         {
             if (_model.IsAutoloading)
+            {
                 button1.Text = "Автозапуск: Убрать";
+                this.toolStripMenuItem4.Text = "Убрать";
+            }
             else
+            {
                 button1.Text = "Автозапуск: Добавить";
+                this.toolStripMenuItem4.Text = "Добавить";
+            }
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
@@ -204,7 +203,8 @@ namespace RestedEyes
 
         private void AutoloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            _model.AddOrRemoveAutoloading();
+            UpdateAutoloadingText();
         }
     }
 }

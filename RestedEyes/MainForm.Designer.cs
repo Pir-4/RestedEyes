@@ -53,7 +53,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(130, 40);
             this.button1.TabIndex = 0;
-            this.button1.Text = "Автозапуск Добавить/Убрать";
+            this.button1.Text = "Автозапуск Добавить";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -141,28 +141,28 @@
             this.toolStripMenuItem2,
             this.toolStripTextBox1});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(55, 20);
-            this.toolStripMenuItem1.Text = "Config";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(68, 20);
+            this.toolStripMenuItem1.Text = "Конфинг";
             // 
             // svaeToolStripMenuItem
             // 
             this.svaeToolStripMenuItem.Name = "svaeToolStripMenuItem";
-            this.svaeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.svaeToolStripMenuItem.Text = "Save as";
+            this.svaeToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.svaeToolStripMenuItem.Text = "Сохранить как";
             this.svaeToolStripMenuItem.Click += new System.EventHandler(this.SaveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem2.Text = "Save";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(153, 22);
+            this.toolStripMenuItem2.Text = "Сохранить";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
             // toolStripTextBox1
             // 
             this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(152, 22);
-            this.toolStripTextBox1.Text = "Open";
+            this.toolStripTextBox1.Size = new System.Drawing.Size(153, 22);
+            this.toolStripTextBox1.Text = "Открыть";
             this.toolStripTextBox1.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
@@ -170,14 +170,14 @@
             this.toolStripMenuItem3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem4});
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(68, 20);
-            this.toolStripMenuItem3.Text = "Autoload";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(91, 20);
+            this.toolStripMenuItem3.Text = "Автозагрузка";
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
             this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem4.Text = "Add";
+            this.toolStripMenuItem4.Text = "Добавить";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.AutoloadToolStripMenuItem_Click);
             // 
             // MainForm
