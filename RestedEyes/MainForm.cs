@@ -2,65 +2,53 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using RestedEyes.Timers;
+using RestedEyes.Autoloadings;
 using System.IO;
 using System.Threading;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form, IModelObserver//, IDetectProcessObserver
+    public partial class MainForm : Form, IModelObserver
     {
         private delegate void TickSafeCallDelegate(TickTimer timer, DateTime dateTime);
         private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
 
-        // private System.Windows.Forms.Timer _currentTimer = new System.Windows.Forms.Timer();
-        IModel wachingTime = new Model();
-        //IDetectProcess detectProcess = new DetectProcess();
+        IModel _model = new Model();
 
         private bool isBreak = false;
-        private string programmPaht = Application.ExecutablePath;
+        private readonly string _programmPaht = Application.ExecutablePath;
         private bool isMeeting = false;
-        private bool isWinLogon = false;
 
-
-
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             this.MaximizeBox = false;
             this.MaximumSize = this.Size;
             this.MinimumSize = this.Size;
-            InitializeButtonAutoloading();
-            wachingTime.attach((IModelObserver)this);
-            //detectProcess.Attach((IDetectProcessObserver)this);
-            //InitializeCurrentTimer();
+            _model.Attach((IModelObserver)this);
 
-            label4.Text = wachingTime.eventStart();
+            label4.Text = _model.Start();
             label2.Text = "Отдыха прошло 0 минут";
             label3.Text = "Работаете 0 минут";
             label5.Text = "";
             button2.Text = "Отдых";
 
+            toolStripComboBox1.Items.AddRange(_model.AutoloadTypes());
+            toolStripComboBox1.SelectedIndex = 0;
+            toolStripComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        private void UpdateAutoloadingText()
         {
-            if (Autoloading.AutoloadingProgramm(programmPaht))
+            if (_model.IsAutoloading)
             {
-                button1.Text = "Автозапуск: Убрать";
+                this.toolStripMenuItem4.Text = "Убрать";
             }
             else
             {
-                button1.Text = "Автозапуск: Добавить";
+                this.toolStripMenuItem4.Text = "Добавить";
             }
         }
-
-        private void InitializeButtonAutoloading()
-        {
-            if (Autoloading.isAutoloading(programmPaht))
-                button1.Text = "Автозапуск: Убрать";
-            else
-                button1.Text = "Автозапуск: Добавить";
-        }
-
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
@@ -133,20 +121,28 @@ namespace RestedEyes
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        public void RaiseError(IModel wachingTime, ModelEvent e)
         {
-            eventBreak(isBreak);
+            if (!isMeeting)
+                MessageBox.Show(e.Msg, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
 
-        private void eventBreak(bool isBreak)
+        private void button2_Click(object sender, EventArgs e)
         {
-            this.isBreak = !isBreak;
+            Break(!isBreak);
+        }
+
+        private void Break(bool isBreak)
+        {
+            this.isBreak = isBreak;
             if (isBreak)
                 button2.Text = "Работать";
             else
                 button2.Text = "Отдых";
-            wachingTime.eventBreak(isBreak);
+            _model.Break(isBreak);
         }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMeeting = checkBox1.Checked;
@@ -157,9 +153,58 @@ namespace RestedEyes
             DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             if (DialogResult.Yes == result)
-                eventBreak(false);
+                Break(false);
             else
-                eventBreak(true);
+                Break(true);
+        }
+
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new SaveFileDialog())
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
+                openFileDialog.Filter = "json files (*.json)|*.json";
+                openFileDialog.RestoreDirectory = true;
+                isMeeting = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _model.SaveConfig(openFileDialog.FileName); 
+                }
+                isMeeting = false;
+            }
+        }
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
+                openFileDialog.Filter = "json files (*.json)|*.json";
+                openFileDialog.RestoreDirectory = true;
+                isMeeting = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _model.OpenConfig(openFileDialog.FileName);
+                }
+                isMeeting = false;
+            }
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _model.SaveConfig();
+        }
+
+        private void AutoloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _model.AddOrRemoveAutoloading();
+            UpdateAutoloadingText();
+        }
+
+        private void toolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _model.ChangeAutoloadTypes(toolStripComboBox1.SelectedItem.ToString());
+            UpdateAutoloadingText();
         }
     }
 }

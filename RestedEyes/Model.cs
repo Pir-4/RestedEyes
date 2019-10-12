@@ -7,6 +7,7 @@ using RestedEyes.Timers;
 using RestedEyes.Configs;
 using RestedEyes.Workers;
 using RestedEyes.DetectProcesses;
+using RestedEyes.Autoloadings;
 
 namespace RestedEyes
 {
@@ -16,6 +17,7 @@ namespace RestedEyes
 
         readonly TickTimer _timer = new TickTimer();
         readonly IDetectProcess _detectProcess = new WinLogonDetect();
+        IAutoloading _autoload;
 
         IEnumerable<Config> _configs;
         List<ITimeWorker> _workers;
@@ -30,20 +32,28 @@ namespace RestedEyes
         event ModelHandler<Model> eventUpdateRestTime;
         event ModelHandler<Model> eventUpdateWorkTime;
         event ModelHandler<Model> eventWinLogonInfo;
+        event ModelHandler<Model> eventRaiseError;
 
         public Model()
         {
-            _configs = ConfigManager.ConfigsDefault();
-           _workers = TimeWorker.Create(_configs).ToList();
-
-            _workers.ForEach(item => item.Attach(this));
+            _autoload = Autoloading.Instance(Types.Registry);
+            InitWorkers(ConfigManager.ConfigsDefault());
             _detectProcess.Attach(this);
-
-            _timer.Attach(_workers);
             _timer.Attach(this, (ITimerObserver)_detectProcess);
         }
 
-        public void attach(IModelObserver observer)
+        private void InitWorkers(IEnumerable<Config> configs)
+        {
+            if (_workers != null && _workers.Any())
+                _timer.Deattach(_workers);
+
+            _configs = configs;
+            _workers = TimeWorker.Create(configs).ToList();
+            _workers.ForEach(item => item.Attach(this));
+            _timer.Attach(_workers);
+        }
+
+        public void Attach(IModelObserver observer)
         {
             _timer.Attach(observer);
 
@@ -54,20 +64,27 @@ namespace RestedEyes
             eventUpdateWorkTime += new ModelHandler<Model>(observer.UpdateWorkTimeLabel);
 
             eventWinLogonInfo += new ModelHandler<Model>(observer.RaiseMessageAfterWinlogon);
+
+            eventRaiseError += new ModelHandler<Model>(observer.RaiseError);
         }
 
-        public void eventBreak(bool isBreak)
+        public void Break(bool isBreak)
         {
             _workers.ForEach(item => item.FreezeRest(isBreak));
         }
 
-        public string eventStart()
+        public string Start()
         {
             _timer.Start();
+            Restart();
+            return _timer.Now().ToString();
+        }
+
+        private void Restart()
+        {
             _workers.ForEach(item => { item.State = State.Work; item.Start(); });
             var minValue = _workers.Min(item => item.RestTime);
             _currentWorker = _workers.First(item => item.RestTime.Equals(minValue));
-            return _timer.Now().ToString();
         }
 
         public void ChangeState(ITimeWorker worker, State state)
@@ -135,7 +152,7 @@ namespace RestedEyes
             }
             else if (!_isWinLogon && e.WinLogon)
             {
-                this.eventBreak(isBreak: true);
+                this.Break(isBreak: true);
             }
             _isWinLogon = e.WinLogon;
         }
@@ -157,5 +174,48 @@ namespace RestedEyes
             return msg;
         }
 
+        public void SaveConfig(string filePath = null)
+        {
+            filePath = string.IsNullOrWhiteSpace(filePath) ? ConfigManager.PathDefault : filePath;
+            ConfigManager.Write(filePath, _configs.ToArray());
+        }
+
+        public void OpenConfig(string filePath)
+        {
+            try
+            {
+                _configs = ConfigManager.Read(filePath);
+                InitWorkers(_configs);
+                Restart();
+            }
+            catch (Exception e)
+            {
+                eventRaiseError.Invoke(this, new ModelEvent() { Msg = e.Message });
+            }
+        }
+
+        public bool IsAutoloading
+        {
+           get { return _autoload.IsAutoloading(Autoloading.ExecutablePath); }
+        }
+
+        public void AddOrRemoveAutoloading()
+        {
+            _autoload.AutoloadingProgramm(Autoloading.ExecutablePath);
+        }
+
+        public string[] AutoloadTypes()
+        {
+            return Enum.GetNames(typeof(Types));
+        }
+
+        public void ChangeAutoloadTypes(string typeName)
+        {
+            if (string.IsNullOrWhiteSpace(typeName))
+                return;
+            var types = (Types)Enum.Parse(typeof(Types), typeName);
+            _autoload = Autoloading.Instance(types);
+
+        }
     }
 }

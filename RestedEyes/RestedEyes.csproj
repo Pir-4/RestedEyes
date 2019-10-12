@@ -47,18 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Autoloading.cs" />
+    <Compile Include="Autoloadings\Autoloading.cs" />
+    <Compile Include="Autoloadings\IAutoloading.cs" />
+    <Compile Include="Autoloadings\RegistryAutoloading.cs" />
+    <Compile Include="Autoloadings\StartUpAutoloading.cs" />
+    <Compile Include="Autoloadings\Types.cs" />
     <Compile Include="Configs\Config.cs" />
     <Compile Include="Configs\ConfigManager.cs" />
     <Compile Include="DetectProcesses\DetectEvent.cs" />
     <Compile Include="DetectProcesses\WinLogonDetect.cs" />
     <Compile Include="DetectProcesses\IDetectProcess.cs" />
     <Compile Include="DetectProcesses\IDetectProcessObserver.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IModel.cs" />
     <Compile Include="Interfaces\IModelObserver.cs" />
@@ -72,8 +76,8 @@
     <Compile Include="Timers\TickTimer.cs" />
     <Compile Include="Workers\ITimeWorker.cs" />
     <Compile Include="Workers\TimeWorker.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -100,7 +104,17 @@
   <ItemGroup>
     <Resource Include="ConfigTime.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
