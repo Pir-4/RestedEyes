@@ -175,6 +175,7 @@
             // 
             this.toolStripComboBox1.Name = "toolStripComboBox1";
             this.toolStripComboBox1.Size = new System.Drawing.Size(121, 23);
+            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox_SelectedIndexChanged);
             // 
             // MainForm
             // 

@@ -25,7 +25,6 @@ namespace RestedEyes
             this.MaximizeBox = false;
             this.MaximumSize = this.Size;
             this.MinimumSize = this.Size;
-            UpdateAutoloadingText();
             _model.Attach((IModelObserver)this);
 
             label4.Text = _model.Start();
@@ -198,6 +197,12 @@ namespace RestedEyes
         private void AutoloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _model.AddOrRemoveAutoloading();
+            UpdateAutoloadingText();
+        }
+
+        private void toolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _model.ChangeAutoloadTypes(toolStripComboBox1.SelectedItem.ToString());
             UpdateAutoloadingText();
         }
     }
