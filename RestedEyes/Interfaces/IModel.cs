@@ -11,7 +11,7 @@ namespace RestedEyes
         void attach(IModelObserver imo);
         void eventBreak(bool isBreak);
         string EventStart();
-        void SaveConfig(string filePath);
+        void SaveConfig(string filePath = null);
         void OpenConfig(string filePath);
     }
 }

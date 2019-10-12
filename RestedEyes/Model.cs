@@ -30,6 +30,7 @@ namespace RestedEyes
         event ModelHandler<Model> eventUpdateRestTime;
         event ModelHandler<Model> eventUpdateWorkTime;
         event ModelHandler<Model> eventWinLogonInfo;
+        event ModelHandler<Model> eventRaiseError;
 
         public Model()
         {
@@ -43,6 +44,7 @@ namespace RestedEyes
             if (_workers != null && _workers.Any())
                 _timer.Deattach(_workers);
 
+            _configs = configs;
             _workers = TimeWorker.Create(configs).ToList();
             _workers.ForEach(item => item.Attach(this));
             _timer.Attach(_workers);
@@ -59,6 +61,8 @@ namespace RestedEyes
             eventUpdateWorkTime += new ModelHandler<Model>(observer.UpdateWorkTimeLabel);
 
             eventWinLogonInfo += new ModelHandler<Model>(observer.RaiseMessageAfterWinlogon);
+
+            eventRaiseError += new ModelHandler<Model>(observer.RaiseError);
         }
 
         public void eventBreak(bool isBreak)
@@ -167,16 +171,24 @@ namespace RestedEyes
             return msg;
         }
 
-        public void SaveConfig(string filePath)
+        public void SaveConfig(string filePath = null)
         {
+            filePath = string.IsNullOrWhiteSpace(filePath) ? ConfigManager.PathDefault : filePath;
             ConfigManager.Write(filePath, _configs.ToArray());
         }
 
         public void OpenConfig(string filePath)
         {
-            _configs = ConfigManager.Read(filePath);
-            InitWorkers(_configs);
-            Restart();
+            try
+            {
+                _configs = ConfigManager.Read(filePath);
+                InitWorkers(_configs);
+                Restart();
+            }
+            catch (Exception e)
+            {
+                eventRaiseError.Invoke(this, new ModelEvent() { Msg = e.Message });
+            }
         }
     }
 }

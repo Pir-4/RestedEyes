@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace RestedEyes
 {
-    public partial class Form1 : Form, IModelObserver
+    public partial class MainForm : Form, IModelObserver
     {
         private delegate void TickSafeCallDelegate(TickTimer timer, DateTime dateTime);
         private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
@@ -18,7 +18,7 @@ namespace RestedEyes
         private string programmPaht = Application.ExecutablePath;
         private bool isMeeting = false;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             this.MaximizeBox = false;
@@ -126,6 +126,13 @@ namespace RestedEyes
             }
         }
 
+        public void RaiseError(IModel wachingTime, ModelEvent e)
+        {
+            if (!isMeeting)
+                MessageBox.Show(e.Msg, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             eventBreak(isBreak);
@@ -156,7 +163,7 @@ namespace RestedEyes
                 eventBreak(true);
         }
 
-        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var openFileDialog = new SaveFileDialog())
             {
@@ -186,6 +193,11 @@ namespace RestedEyes
                 }
                 isMeeting = false;
             }
+        }
+
+        private void SaveToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            _model.SaveConfig();
         }
     }
 }

@@ -10,17 +10,10 @@ namespace RestedEyes.Configs
 {
     public class ConfigManager
     {
-        readonly DataContractJsonSerializer _serializer;
-
-        public ConfigManager()
-        {
-            _serializer = new DataContractJsonSerializer(typeof(IEnumerable<Config>));
-        }
-
         public static bool Exist(string path = null)
         {
             if (string.IsNullOrWhiteSpace(path))
-                path = ConfigManager.PathConfigDefault();
+                path = ConfigManager.PathDefault;
             return File.Exists(path);
         }
 
@@ -75,7 +68,9 @@ namespace RestedEyes.Configs
             };
         }
 
-        public static string PathConfigDefault() => 
-            Path.Combine(Directory.GetCurrentDirectory(), "ConfigTime.json");
+        public static string PathDefault
+        {  
+            get { return Path.Combine(Directory.GetCurrentDirectory(), "ConfigTime.json"); }
+        }
     }
 }
