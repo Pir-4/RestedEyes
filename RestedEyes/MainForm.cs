@@ -35,6 +35,7 @@ namespace RestedEyes
 
             toolStripComboBox1.Items.AddRange(_model.AutoloadTypes());
             toolStripComboBox1.SelectedIndex = 0;
+            toolStripComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         private void UpdateAutoloadingText()
@@ -129,12 +130,12 @@ namespace RestedEyes
 
         private void button2_Click(object sender, EventArgs e)
         {
-            eventBreak(isBreak);
+            Break(!isBreak);
         }
 
-        private void eventBreak(bool isBreak)
+        private void Break(bool isBreak)
         {
-            this.isBreak = !isBreak;
+            this.isBreak = isBreak;
             if (isBreak)
                 button2.Text = "Работать";
             else
@@ -152,9 +153,9 @@ namespace RestedEyes
             DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             if (DialogResult.Yes == result)
-                eventBreak(false);
+                Break(false);
             else
-                eventBreak(true);
+                Break(true);
         }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
