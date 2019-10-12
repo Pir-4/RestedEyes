@@ -34,24 +34,18 @@ namespace RestedEyes
             label5.Text = "";
             button2.Text = "Отдых";
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            _model.AddOrRemoveAutoloading();
-            UpdateAutoloadingText();
+            toolStripComboBox1.Items.AddRange(_model.AutoloadTypes());
+            toolStripComboBox1.SelectedIndex = 0;
         }
 
         private void UpdateAutoloadingText()
         {
             if (_model.IsAutoloading)
             {
-                button1.Text = "Автозапуск: Убрать";
                 this.toolStripMenuItem4.Text = "Убрать";
             }
             else
             {
-                button1.Text = "Автозапуск: Добавить";
                 this.toolStripMenuItem4.Text = "Добавить";
             }
         }

@@ -8,7 +8,7 @@ namespace RestedEyes.Autoloadings
 {
     public enum Types
     {
+        StartUp,
         Registry,
-        StartUp
     }
 }

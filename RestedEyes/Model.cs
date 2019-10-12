@@ -203,6 +203,11 @@ namespace RestedEyes
         {
             _autoload.AutoloadingProgramm(Autoloading.ExecutablePath);
         }
-        
+
+        public string[] AutoloadTypes()
+        {
+            return Enum.GetNames(typeof(Types));
+        }
+
     }
 }
