@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RestedEyes.Timers;
 using RestedEyes.Configs;
 using RestedEyes.Workers;
 using RestedEyes.DetectProcesses;
 using RestedEyes.Autoloadings;
 
-namespace RestedEyes
+namespace RestedEyes.Models
 {
     public class Model : IModel, ITimeWorkerObserver, ITimerObserver, IDetectProcessObserver
     {

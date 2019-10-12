@@ -64,13 +64,13 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IModel.cs" />
-    <Compile Include="Interfaces\IModelObserver.cs" />
-    <Compile Include="Model.cs" />
+    <Compile Include="Models\IModel.cs" />
+    <Compile Include="Models\IModelObserver.cs" />
+    <Compile Include="Models\Model.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\ITimerObserver.cs" />
-    <Compile Include="ModelEvent.cs" />
+    <Compile Include="Models\ModelEvent.cs" />
     <Compile Include="Workers\ITimeWorkerObserver.cs" />
     <Compile Include="Workers\State.cs" />
     <Compile Include="Timers\TickTimer.cs" />
