@@ -10,6 +10,8 @@ namespace RestedEyes.Autoloadings
 {
     public class StartUpAutoloading : Autoloading
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private static StartUpAutoloading _instance;
         private const string StartUpPath = @"AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup";
 
@@ -17,6 +19,7 @@ namespace RestedEyes.Autoloadings
         {
             get
             {
+                Logger.Debug("Instance");
                 if (_instance == null)
                     _instance = new StartUpAutoloading();
                 return _instance;
@@ -30,6 +33,7 @@ namespace RestedEyes.Autoloadings
 
         protected override void Add()
         {
+            Logger.Info("Add to autoloading");
             WshShell shell = new WshShell();
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(PathToLink);
             shortcut.Description = $"{_programmName} shortcut"; 
@@ -39,6 +43,7 @@ namespace RestedEyes.Autoloadings
 
         protected override void Remove()
         {
+            Logger.Info("Remove to autoloading");
             System.IO.File.Delete(PathToLink);
         }
 

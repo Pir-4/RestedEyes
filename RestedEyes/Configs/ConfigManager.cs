@@ -10,6 +10,7 @@ namespace RestedEyes.Configs
 
         public static bool Exist(string path = null)
         {
+            Logger.Info($"Check file is exist '{path}'");
             if (string.IsNullOrWhiteSpace(path))
                 path = ConfigManager.PathDefault;
             return File.Exists(path);

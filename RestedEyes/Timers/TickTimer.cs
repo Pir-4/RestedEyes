@@ -7,12 +7,15 @@ namespace RestedEyes.Timers
 {
     public class TickTimer : IDisposable
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private Timer _timer;
         private delegate void ModelHandler<TickTimer>(TickTimer sender, DateTime dateTime);
         private event ModelHandler<TickTimer> _eventTick;
 
         public void Start(int interval = 1000)
         {
+            Logger.Info($"Start time with interval {interval}");
             _timer = new Timer(TickCallback, null, interval, interval);
         }
 
@@ -24,11 +27,13 @@ namespace RestedEyes.Timers
 
         public void Attach(ITimerObserver observer)
         {
+            Logger.Info($"Attach object {observer}");
             _eventTick += new ModelHandler<TickTimer>(observer.Tick);       
         }
 
         public void Deattach(ITimerObserver observer)
         {
+            Logger.Info($"Deattach object {observer}");
             _eventTick -= new ModelHandler<TickTimer>(observer.Tick);
         }
 

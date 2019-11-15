@@ -6,7 +6,6 @@ using RestedEyes.Configs;
 using RestedEyes.Workers;
 using RestedEyes.DetectProcesses;
 using RestedEyes.Autoloadings;
-using System.Threading;
 
 namespace RestedEyes.Models
 {
