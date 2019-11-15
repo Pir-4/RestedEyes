@@ -21,7 +21,7 @@ namespace RestedEyes
 
         public MainForm()
         {
-            Logger.Info("Start. Init main form");
+            Logger.Info("Start. Create main form");
             InitializeComponent();
             this.MaximizeBox = false;
             this.MaximumSize = this.Size;
@@ -44,7 +44,7 @@ namespace RestedEyes
         {
             Logger.Info("Update text in autoloaing state");
             this.toolStripMenuItem4.Text = _model.IsAutoloading ? "Убрать" : "Добавить";
-            Logger.Debug($"Text change to {this.toolStripMenuItem4.Text}");
+            Logger.Debug($"Autoloaing text change to '{this.toolStripMenuItem4.Text}'");
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
@@ -71,7 +71,7 @@ namespace RestedEyes
             else
             {
                 labelRestTime.Text = "Перерыв " + e.Number.ToString() + $" {e.Sign}!";
-                Logger.Debug($"Lebel rest message change a text to {this.labelRestTime.Text}");
+                Logger.Debug($"Lebel rest message change a text to' {this.labelRestTime.Text}'");
                 if (!isMeeting)
                     MessageBox.Show(e.Msg, labelRestTime.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
                         MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
@@ -88,7 +88,7 @@ namespace RestedEyes
             else
             {
                 labelRestTime.Text = "Пора работать!";
-                Logger.Debug($"Lebel rest message change a text to {this.labelRestTime.Text}");
+                Logger.Debug($"Lebel rest message change a text to '{this.labelRestTime.Text}'");
                 if (!isMeeting)
                     MessageBox.Show($"Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
                         MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
@@ -105,7 +105,7 @@ namespace RestedEyes
             else
             {
                 labelSpendRestTime.Text = "Отдыха прошло " + e.Number.ToString() + " " + e.Msg;
-                Logger.Debug($"Lebel spend rest time change a text to {this.labelRestTime.Text}");
+                Logger.Debug($"Lebel spend rest time change a text to '{this.labelRestTime.Text}'");
             }
         }
 
@@ -119,7 +119,7 @@ namespace RestedEyes
             else
             {
                 labelSpendWorkTime.Text = "Работаете " + e.Number.ToString() + " " + e.Msg;
-                Logger.Debug($"Lebel spend work time change a text to {this.labelSpendWorkTime.Text}");
+                Logger.Debug($"Lebel spend work time change a text to '{this.labelSpendWorkTime.Text}'");
             }
         }
 
@@ -150,14 +150,14 @@ namespace RestedEyes
                 button2.Text = "Работать";
             else
                 button2.Text = "Отдых";
-            Logger.Debug($"Button has text {button2.Text}");
+            Logger.Debug($"Button has text '{button2.Text}'");
             _model.Break(isBreak);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMeeting = checkBox1.Checked;
-            Logger.Info($"Checkbox 'meeting' has state {isMeeting}");
+            Logger.Info($"Checkbox 'meeting' has state '{isMeeting}'");
         }
 
         public void RaiseMessageAfterWinlogon(IModel wachingTime, ModelEvent e)
@@ -165,7 +165,7 @@ namespace RestedEyes
             Logger.Info("Call message box after log in to system");
             DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
-            Logger.Debug($"Dialog result {result.ToString()}");
+            Logger.Debug($"Dialog result '{result.ToString()}'");
             if (DialogResult.Yes == result)
                 Break(false);
             else

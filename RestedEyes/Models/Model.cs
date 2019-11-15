@@ -6,11 +6,14 @@ using RestedEyes.Configs;
 using RestedEyes.Workers;
 using RestedEyes.DetectProcesses;
 using RestedEyes.Autoloadings;
+using System.Threading;
 
 namespace RestedEyes.Models
 {
     public class Model : IModel, ITimeWorkerObserver, ITimerObserver, IDetectProcessObserver
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public delegate void ModelHandler<IModel>(IModel sender, ModelEvent e);
 
         readonly TickTimer _timer = new TickTimer();
@@ -23,8 +26,8 @@ namespace RestedEyes.Models
         ITimeWorker _currentWorker;
 
         bool _isWinLogon = false;
+        object _locker = new Object();
 
-        //***Event*********
         event ModelHandler<Model> eventEndWork;
         event ModelHandler<Model> eventStartWork;
         event ModelHandler<Model> eventUpdateRestTime;
@@ -34,6 +37,7 @@ namespace RestedEyes.Models
 
         public Model()
         {
+            Logger.Info("Create model object");
             _autoload = Autoloading.Instance(Types.Registry);
             InitWorkers(ConfigManager.ConfigsDefault());
             _detectProcess.Attach(this);
@@ -42,17 +46,20 @@ namespace RestedEyes.Models
 
         private void InitWorkers(IEnumerable<Config> configs)
         {
+            Logger.Info("Init workers");
             if (_workers != null && _workers.Any())
                 _timer.Deattach(_workers);
 
             _configs = configs;
             _workers = TimeWorker.Create(configs).ToList();
+            Logger.Debug($"Create {_workers.Count} workers");
             _workers.ForEach(item => item.Attach(this));
             _timer.Attach(_workers);
         }
 
         public void Attach(IModelObserver observer)
         {
+            Logger.Debug($"Attach object {observer.GetType()}");
             _timer.Attach(observer);
 
             eventEndWork += new ModelHandler<Model>(observer.RaiseMessageAboutEndWork);
@@ -68,11 +75,13 @@ namespace RestedEyes.Models
 
         public void Break(bool isBreak)
         {
+            Logger.Info($"Call break mathod for all workers with status isBreake='{isBreak}'");
             _workers.ForEach(item => item.FreezeRest(isBreak));
         }
 
         public string Start()
         {
+            Logger.Info("Start");
             _timer.Start();
             Restart();
             return _timer.Now().ToString();
@@ -80,14 +89,20 @@ namespace RestedEyes.Models
 
         private void Restart()
         {
+            Logger.Info("Start workers");
             _workers.ForEach(item => { item.State = State.Work; item.Start(); });
             var minValue = _workers.Min(item => item.RestTime);
+            Logger.Debug($"Minimum rest time {minValue}");
             _currentWorker = _workers.First(item => item.RestTime.Equals(minValue));
+            Logger.Debug($"Current worker {_currentWorker}");
         }
 
         public void ChangeState(ITimeWorker worker, State state)
         {
             int _;
+            Logger.Info($"New state {state}");
+            Logger.Debug($"Current: state {_currentWorker.State}, rest time {_currentWorker.RestTime}.");
+            Logger.Debug($"new workre: rest time {worker.RestTime}");
             if (_currentWorker.State == State.Rest && _currentWorker.RestTime > worker.RestTime)
                 return;
 
@@ -102,6 +117,7 @@ namespace RestedEyes.Models
                     Msg = worker.Config.message,
                     Sign = ConvertTimeToString(worker.RestTime, out _)
                 });
+                Logger.Info($"Change current worker to {worker}, new state {state}");
                 _currentWorker = worker;
             }
             else if (state == State.ToWork)
@@ -112,16 +128,17 @@ namespace RestedEyes.Models
                     Msg = worker.Config.message,
                     Sign = ConvertTimeToString(worker.WorkTime, out _)
                 });
+                Logger.Info($"Change current worker to {worker}, new state {state}");
                 _currentWorker = worker;
             }
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
-            UpdateTimeCounterWorAndRest();
+            UpdateTimeCounterWorkAndRest();
         }
 
-        private void UpdateTimeCounterWorAndRest()
+        private void UpdateTimeCounterWorkAndRest()
         {
             if (_currentWorker != null)
             {
@@ -140,23 +157,29 @@ namespace RestedEyes.Models
 
         public void UpdateWinlogon(WinLogonDetect detectProcess, DetectEvent e)
         {
-            if (_isWinLogon && !e.WinLogon)//detect when winlogon window is hiding
+            lock (_locker)
             {
-                eventWinLogonInfo.Invoke(this, new ModelEvent()
+                if (_isWinLogon && !e.WinLogon)//detect when winlogon window is hiding
                 {
-                    Number = 0,
-                    Msg = ""
-                });
+                    Logger.Info("Logon is hiden");
+                    eventWinLogonInfo.Invoke(this, new ModelEvent()
+                    {
+                        Number = 0,
+                        Msg = ""
+                    });
+                }
+                else if (!_isWinLogon && e.WinLogon)
+                {
+                    Logger.Info("Logon is eneble");
+                    this.Break(isBreak: true);
+                }
+                _isWinLogon = e.WinLogon;
             }
-            else if (!_isWinLogon && e.WinLogon)
-            {
-                this.Break(isBreak: true);
-            }
-            _isWinLogon = e.WinLogon;
         }
 
         private string ConvertTimeToString(TimeSpan timeSpan, out int time)
         {
+            Logger.Debug($"Input time {timeSpan}");
             time = timeSpan.Seconds;
             var msg = "секунд";
             if (timeSpan.Minutes > 0)
@@ -169,12 +192,14 @@ namespace RestedEyes.Models
                 msg = "часов";
                 time = timeSpan.Days;
             }
+            Logger.Debug($"Output message {msg}, time {time}");
             return msg;
         }
 
         public void SaveConfig(string filePath = null)
         {
             filePath = string.IsNullOrWhiteSpace(filePath) ? ConfigManager.PathDefault : filePath;
+            Logger.Info($"Save config to {filePath}");
             ConfigManager.Write(filePath, _configs.ToArray());
         }
 
@@ -182,6 +207,7 @@ namespace RestedEyes.Models
         {
             try
             {
+                Logger.Info($"Read file {filePath}");
                 _configs = ConfigManager.Read(filePath);
                 InitWorkers(_configs);
                 Restart();
@@ -199,6 +225,7 @@ namespace RestedEyes.Models
 
         public void AddOrRemoveAutoloading()
         {
+            Logger.Info("Call Autoloading");
             _autoload.AutoloadingProgramm(Autoloading.ExecutablePath);
         }
 
@@ -209,10 +236,12 @@ namespace RestedEyes.Models
 
         public void ChangeAutoloadTypes(string typeName)
         {
+            Logger.Info($"Input type {typeName}");
             if (string.IsNullOrWhiteSpace(typeName))
                 return;
-            var types = (Types)Enum.Parse(typeof(Types), typeName);
-            _autoload = Autoloading.Instance(types);
+            var type = (Types)Enum.Parse(typeof(Types), typeName);
+            Logger.Debug($"Type after parse {type}");
+            _autoload = Autoloading.Instance(type);
 
         }
     }
