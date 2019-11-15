@@ -13,13 +13,17 @@ namespace RestedEyes.Autoloadings
 {
     public abstract class Autoloading : IAutoloading
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected string _programmPath = "";
         protected string _programmName = "";
 
         protected void InitProgrammPathAndName(string programmPath)
         {
+            Logger.Info($"Input programm path {programmPath}");
             _programmPath = programmPath;
             _programmName = Path.GetFileNameWithoutExtension(programmPath);
+            Logger.Debug($"programm name {_programmName}");
         }
 
         protected abstract void Add();
@@ -35,6 +39,7 @@ namespace RestedEyes.Autoloadings
 
         public void AutoloadingProgramm(string programmPath)
         {
+            Logger.Info("Autoloading");
             InitProgrammPathAndName(programmPath);
             if (IsAutoloading(programmPath))
                 Remove();
@@ -49,6 +54,7 @@ namespace RestedEyes.Autoloadings
 
         public static IAutoloading Instance(Types type)
         {
+            Logger.Info($"Instance Autoloading by {type}");
             switch(type)
             {
                 case Types.Registry:  return RegistryAutoloading.InstanceObj;

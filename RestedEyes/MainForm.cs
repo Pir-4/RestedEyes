@@ -8,10 +8,12 @@ namespace RestedEyes
 {
     public partial class MainForm : Form, IModelObserver
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private delegate void TickSafeCallDelegate(TickTimer timer, DateTime dateTime);
         private delegate void ModelEventSafeCallDelegate(IModel wachingTime, ModelEvent @event);
 
-        IModel _model = new Model();
+        IModel _model;
 
         private bool isBreak = false;
         private readonly string _programmPaht = Application.ExecutablePath;
@@ -19,16 +21,18 @@ namespace RestedEyes
 
         public MainForm()
         {
+            Logger.Info("Start. Create main form");
             InitializeComponent();
             this.MaximizeBox = false;
             this.MaximumSize = this.Size;
             this.MinimumSize = this.Size;
+            _model = new Model();
             _model.Attach((IModelObserver)this);
 
             label4.Text = _model.Start();
-            label2.Text = "Отдыха прошло 0 минут";
-            label3.Text = "Работаете 0 минут";
-            label5.Text = "";
+            labelSpendRestTime.Text = "Отдыха прошло 0 минут";
+            labelSpendWorkTime.Text = "Работаете 0 минут";
+            labelRestTime.Text = "";
             button2.Text = "Отдых";
 
             toolStripComboBox1.Items.AddRange(_model.AutoloadTypes());
@@ -38,55 +42,53 @@ namespace RestedEyes
 
         private void UpdateAutoloadingText()
         {
-            if (_model.IsAutoloading)
-            {
-                this.toolStripMenuItem4.Text = "Убрать";
-            }
-            else
-            {
-                this.toolStripMenuItem4.Text = "Добавить";
-            }
+            Logger.Info("Update text in autoloaing state");
+            this.toolStripMenuItem4.Text = _model.IsAutoloading ? "Убрать" : "Добавить";
+            Logger.Debug($"Autoloaing text change to '{this.toolStripMenuItem4.Text}'");
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
         {
-            if (label1.InvokeRequired)
+            if (labelCurrentTime.InvokeRequired)
             {
                 var d = new TickSafeCallDelegate(Tick);
-                label1.Invoke(d, new object[] { timer, dateTime });
+                labelCurrentTime.Invoke(d, new object[] { timer, dateTime });
             }
             else
             {
-                label1.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
+                Logger.Debug("Update current time lebel");
+                labelCurrentTime.Text = $"{dateTime.Hour}:{dateTime.Minute}:{dateTime.Second}";
             }
         }
 
         public void RaiseMessageAboutEndWork(IModel wachingTime, ModelEvent e)
         {
-            if (label5.InvokeRequired)
+            if (labelRestTime.InvokeRequired)
             {
                 var d = new ModelEventSafeCallDelegate(RaiseMessageAboutEndWork);
-                label5.Invoke(d, new object[] { wachingTime, e });
+                labelRestTime.Invoke(d, new object[] { wachingTime, e });
             }
             else
             {
-                label5.Text = "Перерыв " + e.Number.ToString() + $" {e.Sign}!";
+                labelRestTime.Text = "Перерыв " + e.Number.ToString() + $" {e.Sign}!";
+                Logger.Debug($"Lebel rest message change a text to' {this.labelRestTime.Text}'");
                 if (!isMeeting)
-                    MessageBox.Show(e.Msg, label5.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
+                    MessageBox.Show(e.Msg, labelRestTime.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
                         MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
         }
 
         public void RaiseMessageAboutStartWork(IModel wachingTime, ModelEvent e)
         {
-            if (label5.InvokeRequired)
+            if (labelRestTime.InvokeRequired)
             {
                 var d = new ModelEventSafeCallDelegate(RaiseMessageAboutStartWork);
-                label5.Invoke(d, new object[] { wachingTime, e });
+                labelRestTime.Invoke(d, new object[] { wachingTime, e });
             }
             else
             {
-                label5.Text = "Пора работать!";
+                labelRestTime.Text = "Пора работать!";
+                Logger.Debug($"Lebel rest message change a text to '{this.labelRestTime.Text}'");
                 if (!isMeeting)
                     MessageBox.Show($"Пора работать!", "Отдых закончен", MessageBoxButtons.OK, MessageBoxIcon.Exclamation,
                         MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
@@ -95,61 +97,75 @@ namespace RestedEyes
 
         public void UpdateRestTimeLabel(IModel wachingTime, ModelEvent e)
         {
-            if (label2.InvokeRequired)
+            if (labelSpendRestTime.InvokeRequired)
             {
                 var d = new ModelEventSafeCallDelegate(UpdateRestTimeLabel);
-                label2.Invoke(d, new object[] { wachingTime, e });
+                labelSpendRestTime.Invoke(d, new object[] { wachingTime, e });
             }
             else
             {
-                label2.Text = "Отдыха прошло " + e.Number.ToString() + " " + e.Msg;
+                labelSpendRestTime.Text = "Отдыха прошло " + e.Number.ToString() + " " + e.Msg;
+                Logger.Debug($"Lebel spend rest time change a text to '{this.labelRestTime.Text}'");
             }
         }
 
         public void UpdateWorkTimeLabel(IModel wachingTime, ModelEvent e)
         {
-            if (label3.InvokeRequired)
+            if (labelSpendWorkTime.InvokeRequired)
             {
                 var d = new ModelEventSafeCallDelegate(UpdateWorkTimeLabel);
-                label3.Invoke(d, new object[] { wachingTime, e });
+                labelSpendWorkTime.Invoke(d, new object[] { wachingTime, e });
             }
             else
             {
-                label3.Text = "Работаете " + e.Number.ToString() + " " + e.Msg;
+                labelSpendWorkTime.Text = "Работаете " + e.Number.ToString() + " " + e.Msg;
+                Logger.Debug($"Lebel spend work time change a text to '{this.labelSpendWorkTime.Text}'");
             }
         }
 
         public void RaiseError(IModel wachingTime, ModelEvent e)
         {
+            Logger.Info($"Get error");
             if (!isMeeting)
+            {
+                Logger.Error($"Error: {e.Msg}");
                 MessageBox.Show(e.Msg, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+                        MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            Logger.Info("Press to button.");
+            Logger.Debug($"Current state property isBreak={isBreak}");
             Break(!isBreak);
+            Logger.Debug($"Change state property to isBreak={isBreak}");
         }
 
         private void Break(bool isBreak)
         {
+            Logger.Info("Call method Break");
             this.isBreak = isBreak;
             if (isBreak)
                 button2.Text = "Работать";
             else
                 button2.Text = "Отдых";
+            Logger.Debug($"Button has text '{button2.Text}'");
             _model.Break(isBreak);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMeeting = checkBox1.Checked;
+            Logger.Info($"Checkbox 'meeting' has state '{isMeeting}'");
         }
 
         public void RaiseMessageAfterWinlogon(IModel wachingTime, ModelEvent e)
         {
+            Logger.Info("Call message box after log in to system");
             DialogResult result = MessageBox.Show("Начать работать?", "Был перерыв", MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            Logger.Debug($"Dialog result '{result.ToString()}'");
             if (DialogResult.Yes == result)
                 Break(false);
             else
@@ -158,15 +174,17 @@ namespace RestedEyes
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new SaveFileDialog())
+            using (var fileDialog = new SaveFileDialog())
             {
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
-                openFileDialog.Filter = "json files (*.json)|*.json";
-                openFileDialog.RestoreDirectory = true;
+                Logger.Info("Open file dialog 'SaveAs'");
+                fileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
+                fileDialog.Filter = "json files (*.json)|*.json";
+                fileDialog.RestoreDirectory = true;
                 isMeeting = true;
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _model.SaveConfig(openFileDialog.FileName); 
+                    Logger.Debug($"Chose file {fileDialog.FileName}");
+                    _model.SaveConfig(fileDialog.FileName); 
                 }
                 isMeeting = false;
             }
@@ -174,15 +192,17 @@ namespace RestedEyes
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new OpenFileDialog())
+            using (var fileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
-                openFileDialog.Filter = "json files (*.json)|*.json";
-                openFileDialog.RestoreDirectory = true;
+                Logger.Info("Open file dialog 'Open'");
+                fileDialog.InitialDirectory = Path.GetDirectoryName(_programmPaht);
+                fileDialog.Filter = "json files (*.json)|*.json";
+                fileDialog.RestoreDirectory = true;
                 isMeeting = true;
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _model.OpenConfig(openFileDialog.FileName);
+                    Logger.Debug($"Chose file {fileDialog.FileName}");
+                    _model.OpenConfig(fileDialog.FileName);
                 }
                 isMeeting = false;
             }
@@ -190,17 +210,20 @@ namespace RestedEyes
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _model.SaveConfig();
+            Logger.Info("Save current to default file"); 
+            _model.SaveConfig();//TODO change to current file
         }
 
         private void AutoloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Logger.Info("Add or remove to autoload");
             _model.AddOrRemoveAutoloading();
             UpdateAutoloadingText();
         }
 
         private void toolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Logger.Info("Change type autoloading");
             _model.ChangeAutoloadTypes(toolStripComboBox1.SelectedItem.ToString());
             UpdateAutoloadingText();
         }

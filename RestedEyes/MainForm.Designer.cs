@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelCurrentTime = new System.Windows.Forms.Label();
+            this.labelSpendRestTime = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelSpendWorkTime = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labelRestTime = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,21 +49,21 @@
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(87, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Текущее время";
+            this.labelCurrentTime.AutoSize = true;
+            this.labelCurrentTime.Location = new System.Drawing.Point(12, 35);
+            this.labelCurrentTime.Name = "label1";
+            this.labelCurrentTime.Size = new System.Drawing.Size(87, 13);
+            this.labelCurrentTime.TabIndex = 1;
+            this.labelCurrentTime.Text = "Текущее время";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(128, 70);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Отдхы прошло";
+            this.labelSpendRestTime.AutoSize = true;
+            this.labelSpendRestTime.Location = new System.Drawing.Point(128, 70);
+            this.labelSpendRestTime.Name = "label2";
+            this.labelSpendRestTime.Size = new System.Drawing.Size(80, 13);
+            this.labelSpendRestTime.TabIndex = 2;
+            this.labelSpendRestTime.Text = "Отдхы прошло";
             // 
             // button2
             // 
@@ -77,12 +77,12 @@
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 70);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Работы прошло";
+            this.labelSpendWorkTime.AutoSize = true;
+            this.labelSpendWorkTime.Location = new System.Drawing.Point(13, 70);
+            this.labelSpendWorkTime.Name = "label3";
+            this.labelSpendWorkTime.Size = new System.Drawing.Size(86, 13);
+            this.labelSpendWorkTime.TabIndex = 4;
+            this.labelSpendWorkTime.Text = "Работы прошло";
             // 
             // label4
             // 
@@ -95,12 +95,12 @@
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 98);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 13);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Время отдыха";
+            this.labelRestTime.AutoSize = true;
+            this.labelRestTime.Location = new System.Drawing.Point(12, 98);
+            this.labelRestTime.Name = "label5";
+            this.labelRestTime.Size = new System.Drawing.Size(79, 13);
+            this.labelRestTime.TabIndex = 6;
+            this.labelRestTime.Text = "Время отдыха";
             // 
             // checkBox1
             // 
@@ -185,12 +185,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(260, 131);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.labelRestTime);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.labelSpendWorkTime);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelSpendRestTime);
+            this.Controls.Add(this.labelCurrentTime);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -204,12 +204,12 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelCurrentTime;
+        private System.Windows.Forms.Label labelSpendRestTime;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelSpendWorkTime;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labelRestTime;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;

@@ -11,17 +11,21 @@ namespace RestedEyes.DetectProcesses
 
     public class  WinLogonDetect : IDetectProcess, ITimerObserver
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private static string winLogin = "LogonUI";
 
         public event ModelHandlerDetect<WinLogonDetect> eventWinLogon;
 
         public void Attach(IDetectProcessObserver imo)
         {
+            Logger.Info($"Attach object {imo}");
             eventWinLogon += new ModelHandlerDetect<WinLogonDetect>(imo.UpdateWinlogon);
         }
 
-        private  static List<string> getNamesProcess()
+        private  static List<string> GetNamesProcess()
         {
+            Logger.Info("Get processes names");
             List<string> result = new List<string>();
             System.Diagnostics.Process[] localByName = System.Diagnostics.Process.GetProcesses();
             foreach (System.Diagnostics.Process pr in localByName)
@@ -33,7 +37,7 @@ namespace RestedEyes.DetectProcesses
 
         public void CheckWinlogon()
         {
-            eventWinLogon.Invoke(this, new DetectEvent(getNamesProcess().Contains(winLogin), winLogin));
+            eventWinLogon.Invoke(this, new DetectEvent(GetNamesProcess().Contains(winLogin), winLogin));
         }
 
         public void Tick(TickTimer timer, DateTime dateTime)
