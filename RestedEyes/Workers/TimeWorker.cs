@@ -106,6 +106,7 @@ namespace RestedEyes.Workers
             Logger.Debug($"current state time {ChangeStatusTime}, input time {ChangeStatusTime}");
             this.ChangeStatusTime -= otherWorker.ChangeStatusTime;
         }
+
         private TimeSpan ToTimeSpan(TimeInfo timeInfo)
         {
             var sign = timeInfo.Sign.ToLower();
